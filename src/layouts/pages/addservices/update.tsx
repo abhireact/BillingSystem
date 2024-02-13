@@ -22,19 +22,35 @@ const token = Cookies.get("token");
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { message } from "antd";
 import Checkbox from "@mui/material/Checkbox";
-//import {ChangeEvent} from "react";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
-// const validationSchema = yup.object({
-//   username: yup.string().min(2).max(25).required("Please enter your name"),
-
-//   password: yup
-//     .string()
-//     .min(8, "Password should be of minimum 8 characters length")
-//     .required("Password is required"),
-// });
-
-const Create = (props: any) => {
+const Update = (props: any) => {
   const { setOpenupdate, editData } = props;
+  const [groupsoption, setGroupsoption] = useState([]);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await axios.get("http://10.0.20.121:8000/add_group", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          console.log(response.data, "my groups data");
+          setGroupsoption(response.data);
+        }
+      } catch (error) {
+        // console.error(error);
+        console.log("Data not found");
+      }
+    };
+
+    fetchGroups();
+  }, []);
+
   const handleCloseupdate = () => {
     setOpenupdate(false);
   };
@@ -95,18 +111,26 @@ const Create = (props: any) => {
               </Grid>
 
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  variant="standard"
-                  required
-                  name="group"
-                  label="Group"
-                  value={values.group}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.group && Boolean(errors.group)}
-                  helperText={touched.group && errors.group}
-                  mb={10}
-                />
+                <FormControl sx={{ m: 1, minWidth: "100%" }}>
+                  {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                  <Select
+                    label="choose group"
+                    value={values.group}
+                    onChange={handleChange}
+                    autoWidth={true}
+                    name="group"
+                    variant="standard"
+                  >
+                    <MenuItem value="">
+                      <em>Choose Group</em>
+                    </MenuItem>
+                    {groupsoption.map((groups, index) => (
+                      <MenuItem key={index} value={groups.group_name}>
+                        {groups.group_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
@@ -330,4 +354,4 @@ const Create = (props: any) => {
   );
 };
 
-export default Create;
+export default Update;

@@ -32,9 +32,8 @@ const Create = (props: any) => {
     },
     // validationSchema: validationSchema,
     onSubmit: (values, action) => {
-      const sendData = values;
       axios
-        .post("http://10.0.20.121:8000/expenses", sendData, {
+        .post("http://10.0.20.121:8000/expensemaster", values, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -65,7 +64,7 @@ const Create = (props: any) => {
           <Grid item sm={4.1}>
             <MDInput
               variant="standard"
-              name="unit_name"
+              name="expense_name"
               value={values.expense_name}
               onChange={handleChange}
               onBlur={handleBlur}

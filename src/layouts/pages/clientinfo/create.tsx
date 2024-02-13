@@ -21,16 +21,7 @@ import MDAvatar from "components/MDAvatar";
 const token = Cookies.get("token");
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { message } from "antd";
-//import {ChangeEvent} from "react";
 
-// const validationSchema = yup.object({
-//   username: yup.string().min(2).max(25).required("Please enter your name"),
-
-//   password: yup
-//     .string()
-//     .min(8, "Password should be of minimum 8 characters length")
-//     .required("Password is required"),
-// });
 const states = [
   "Andhra Pradesh",
   "Arunachal Pradesh",

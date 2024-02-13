@@ -75,17 +75,22 @@ import Icon from "@mui/material/Icon";
 import profilePicture from "assets/images/team-3.jpg";
 import CompanySetup from "layouts/pages/billing/viewcompany";
 import CreateCompany from "layouts/pages/companysetup/companysetup";
-import ClientInfo from "layouts/pages/clientinfo/view";
+import ClientInfo from "layouts/pages/clientinfo";
 import GeneralSetting from "layouts/pages/billing/generalsetting";
 import TaxationSetting from "layouts/pages/billing/taxationsetting";
 import Login from "layouts/pages/login";
-import GroupMaster from "layouts/pages/group_master/view";
-import BrandMaster from "layouts/pages/brand_master/view";
+import GroupMaster from "layouts/pages/group_master";
+import BrandMaster from "layouts/pages/brand_master";
 import AddService from "layouts/pages/addservices";
 import AddProduct from "layouts/pages/addproduct";
-import UnitMaster from "layouts/pages/units/view";
-import ExpenseMaster from "layouts/pages/expense_master/view";
+import UnitMaster from "layouts/pages/units";
+import ExpenseMaster from "layouts/pages/expense_master";
 import AddExpense from "layouts/pages/addexpense";
+import GeneralConfig from "layouts/pages/printing/generalconfig";
+import DocumentConfig from "layouts/pages/printing/documentconfig";
+import DocumentHeader from "layouts/pages/printing/documentheaders";
+import DocumentTerm from "layouts/pages/printing/documentterms";
+import Supplier from "layouts/pages/supplier";
 const routes = [
   {
     type: "collapse",
@@ -163,6 +168,36 @@ const routes = [
         name: "INTERNSHIP",
         key: "intern",
         collapse: [
+          {
+            name: "Supplier Information",
+            key: "suppliers",
+            route: "/pages/intern/suppliers",
+            component: <Supplier />,
+          },
+          {
+            name: "Document Headers",
+            key: "documentheaders",
+            route: "/pages/intern/documentheaders",
+            component: <DocumentHeader />,
+          },
+          {
+            name: "Document Terms",
+            key: "documentterms",
+            route: "/pages/intern/documentterms",
+            component: <DocumentTerm />,
+          },
+          {
+            name: "Document Configuration",
+            key: "documentconfig",
+            route: "/pages/intern/documentconfig",
+            component: <DocumentConfig />,
+          },
+          {
+            name: "General Configuration",
+            key: "generalconfig",
+            route: "/pages/intern/generalconfig",
+            component: <GeneralConfig />,
+          },
           {
             name: "Add Expense",
             key: "addexpense",

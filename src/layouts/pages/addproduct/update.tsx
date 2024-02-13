@@ -22,6 +22,8 @@ const token = Cookies.get("token");
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { message } from "antd";
 import Checkbox from "@mui/material/Checkbox";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 //import {ChangeEvent} from "react";
 
 // const validationSchema = yup.object({
@@ -32,84 +34,90 @@ import Checkbox from "@mui/material/Checkbox";
 //     .min(8, "Password should be of minimum 8 characters length")
 //     .required("Password is required"),
 // });
-const unitOptions = [
-  "UNT",
-  "TON",
-  "TBS",
-  "SQY",
-  "SQM",
-  "SQF",
-  "SET",
-  "ROL",
-  "QTL",
-  "PCS",
-  "PAC",
-  "NOS",
-  "MTR",
-  "MLT",
-  "KLR",
-  "KGS",
-  "GMS",
-  "DOZ",
-  "CTN",
-  "CMS",
-  "CCM",
-  "CBM",
-  "CAN",
-  "BUN",
-  "BTL",
-  "BOX",
-  "BKL",
-  "BDL",
-  "BAL",
-  "BAG",
-];
-let initialValues = {
-  group: "",
-  brand: "",
-  item_code: "",
-  product_name: "",
-  print_name: "",
-  purchase_price: "",
-  sale_price: "",
-  min_sale_price: "",
-  sale_discount: "",
-  mrp: "",
-  unit: "",
-  opening_stock: "",
-  opening_stock_price: "",
-  hsn_sac_code: "",
-  cgst: 0,
-  sgst: 0,
-  igst: 0,
-  cess: 0,
-  product_description: "",
-  print_description: false,
-  low_level_limit: "",
-  product_type: "",
-  serial_no: "",
-
-  one_click_sale: true,
-  enable_tracking: true,
-  print_serial_no: true,
-  not_for_sale: true,
-};
 
 const Update = (props: any) => {
   const { setOpenupdate, editData } = props;
   const handleCloseupdate = () => {
     setOpenupdate(false);
   };
+  const [groupsoption, setGroupsoption] = useState([]);
+  const [brandsoption, setBrandsoption] = useState([]);
 
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await axios.get("http://10.0.20.121:8000/add_group", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          console.log(response.data, "my groups data");
+          setGroupsoption(response.data);
+        }
+      } catch (error) {
+        // console.error(error);
+        console.log("Data not found");
+      }
+    };
+    const fetchBrands = async () => {
+      try {
+        const response = await axios.get("http://10.0.20.121:8000/brands", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          console.log(response.data, "my groups data");
+          setBrandsoption(response.data);
+        }
+      } catch (error) {
+        // console.error(error);
+        console.log("Data not found");
+      }
+    };
+    fetchGroups();
+    fetchBrands();
+  }, []);
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
-    initialValues,
+    initialValues: {
+      group: editData.group,
+      brand: editData.brand,
+      item_code: editData.item_code,
+      product_name: editData.product_name,
+      print_name: editData.print_name,
+      purchase_price: editData.purchase_price,
+      sale_price: editData.sale_price,
+      min_sale_price: editData.min_sale_price,
+      sale_discount: editData.sale_discount,
+      mrp: editData.mrp,
+      unit: editData.unit,
+      opening_stock: editData.opening_stock,
+      opening_stock_price: editData.opening_stock_price,
+      hsn_sac_code: editData.hsn_sac_code,
+      cgst: editData.cgst,
+      sgst: editData.sgst,
+      igst: editData.igst,
+      cess: editData.cess,
+      product_description: editData.product_description,
+      print_description: editData.print_description,
+      low_level_limit: editData.low_level_limit,
+      product_type: editData.product_type,
+      serial_no: editData.serial_no,
+      one_click_sale: editData.one_click_sale,
+      enable_tracking: editData.enable_tracking,
+      print_serial_no: editData.print_serial_no,
+      not_for_sale: editData.not_for_sale,
+    },
     // validationSchema: validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, action) => {
-      let sendData = values;
+      let sendData = { ...values, old_product_name: editData.product_name };
 
       await axios
-        .post("http://10.0.20.121:8000/products", sendData, {
+        .put("http://10.0.20.121:8000/products", sendData, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -142,32 +150,49 @@ const Update = (props: any) => {
               </Grid>
 
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  variant="standard"
-                  required
-                  name="group"
-                  label="Group"
-                  value={values.group}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.group && Boolean(errors.group)}
-                  helperText={touched.group && errors.group}
-                  mb={10}
-                />
+                <FormControl sx={{ m: 1, minWidth: "100%" }}>
+                  {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                  <Select
+                    label="choose group"
+                    value={values.group}
+                    onChange={handleChange}
+                    autoWidth={true}
+                    name="group"
+                    variant="standard"
+                  >
+                    <MenuItem value="">
+                      <em>Choose Group</em>
+                    </MenuItem>
+                    {groupsoption.map((groups, index) => (
+                      <MenuItem key={index} value={groups.group_name}>
+                        {groups.group_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  variant="standard"
-                  name="brand"
-                  label="Brand"
-                  value={values.brand}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.brand && Boolean(errors.brand)}
-                  helperText={touched.brand && errors.brand}
-                  mb={10}
-                />
+                <FormControl sx={{ m: 1, minWidth: "100%" }}>
+                  {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                  <Select
+                    label="choose group"
+                    value={values.brand}
+                    onChange={handleChange}
+                    autoWidth={true}
+                    name="brand"
+                    variant="standard"
+                  >
+                    <MenuItem value="">
+                      <em>Choose Brand</em>
+                    </MenuItem>
+                    {brandsoption.map((brands, index) => (
+                      <MenuItem key={index} value={brands.brand_name}>
+                        {brands.brand_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                 <MDInput
@@ -281,19 +306,27 @@ const Update = (props: any) => {
                 </MDTypography>
               </Grid>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  variant="standard"
-                  type="number"
-                  required
-                  name="unit"
-                  label="Unit"
-                  value={values.unit}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.unit && Boolean(errors.unit)}
-                  helperText={touched.unit && errors.unit}
-                  mb={10}
-                />
+                <FormControl sx={{ m: 1, minWidth: "100%" }}>
+                  {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                  <Select
+                    label="choose group"
+                    value={values.unit}
+                    onChange={handleChange}
+                    autoWidth={true}
+                    name="unit"
+                    variant="standard"
+                  >
+                    <MenuItem value="testunit1">
+                      <em>testunit1</em>
+                    </MenuItem>
+                    <MenuItem value="testunit2">
+                      <em>testunit2</em>
+                    </MenuItem>
+                    <MenuItem value="testunit">
+                      <em>testunit</em>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                 <MDInput

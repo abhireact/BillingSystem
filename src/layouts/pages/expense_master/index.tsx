@@ -47,7 +47,7 @@ const View = () => {
   const handleDeleteData = async (row: any) => {
     console.log(row, "Delete Data");
     try {
-      const deletedata = await axios.delete("http://10.0.20.121:8000/expenses", {
+      const deletedata = await axios.delete("http://10.0.20.121:8000/expensemaster", {
         data: {
           ...row,
         },
@@ -65,7 +65,7 @@ const View = () => {
   };
   useEffect(() => {
     axios
-      .get("http://10.0.20.121:8000/expenses", {
+      .get("http://10.0.20.121:8000/expensemaster", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -82,13 +82,13 @@ const View = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "Expenses Name", accessor: "unit_name" },
+      { Header: "Expenses Name", accessor: "expense_name" },
 
       { Header: "Action", accessor: "action", width: "30%" },
     ],
 
     rows: data.map((row, index) => ({
-      unit_name: <MDTypography variant="p">{row.unit_name}</MDTypography>,
+      expense_name: <MDTypography variant="p">{row.expense_name}</MDTypography>,
 
       action: (
         <MDTypography variant="p">

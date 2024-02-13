@@ -7,25 +7,15 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import Cookies from "js-cookie";
-import MDButton from "components/MDButton";
 import Grid from "@mui/material/Grid";
-import FormField from "layouts/ecommerce/products/new-product/components/FormField";
-import Autocomplete from "@mui/material/Autocomplete";
 import MDTypography from "components/MDTypography";
-import MDDropzone from "components/MDDropzone";
-import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
-import { FormControlLabel, FormLabel, RadioGroup } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
-import MDAvatar from "components/MDAvatar";
-
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import Divider from "@mui/material/Divider";
-import CardActions from "@mui/material/CardActions";
 import Checkbox from "@mui/material/Checkbox";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Dialog from "@mui/material/Dialog";
+import Template from "./template";
 const token = Cookies.get("token");
 
 //import {ChangeEvent} from "react";
@@ -38,47 +28,19 @@ const token = Cookies.get("token");
 //     .min(8, "Password should be of minimum 8 characters length")
 //     .required("Password is required"),
 // });
-const unitOptions = [
-  "UNT",
-  "TON",
-  "TBS",
-  "SQY",
-  "SQM",
-  "SQF",
-  "SET",
-  "ROL",
-  "QTL",
-  "PCS",
-  "PAC",
-  "NOS",
-  "MTR",
-  "MLT",
-  "KLR",
-  "KGS",
-  "GMS",
-  "DOZ",
-  "CTN",
-  "CMS",
-  "CCM",
-  "CBM",
-  "CAN",
-  "BUN",
-  "BTL",
-  "BOX",
-  "BKL",
-  "BDL",
-  "BAL",
-  "BAG",
-];
+const unitOptions = ["A4 trend", "A5 trend"];
+const engineoptions = ["TSC", "Zebra"];
 let initialValues = {
-  secure_access: false,
-  negative_stock_sale: false,
-  allow_task_confirmation: false,
-  default_unit: "",
-  inventory_identifier: "",
-  inventory_valuation: "",
-  enable_manufacturing: false,
-  price_catalog: false,
+  template: "A4 trend",
+  print_preview: false,
+  watermark: "",
+  payment_receipt: false,
+  barcode_print_engine: "TSC",
+  authorized_signatory: "",
+  print_pos_bill: false,
+  print_pos_token: false,
+  invoice_print_cash: "",
+  invoice_print_client: "",
 };
 function debounce<T extends (...args: any[]) => any>(func: T, delay: number) {
   let timeout: ReturnType<typeof setTimeout>;
@@ -95,7 +57,7 @@ function debounce<T extends (...args: any[]) => any>(func: T, delay: number) {
     timeout = setTimeout(later, delay);
   };
 }
-const Test = () => {
+const View = () => {
   const [formdata, setFormdata] = useState("create");
   const tosubmit = useRef(false);
   const debouncedSubmit = useCallback(
@@ -103,29 +65,29 @@ const Test = () => {
     []
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://10.0.20.121:8000/generalsettings", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.status === 200) {
-          console.log(response.data);
-          initialValues = response.data;
-          setFormdata("edit");
-        }
-      } catch (error) {
-        // console.error(error);
-        console.log("Data not found");
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("http://10.0.20.121:8000/generalsettings", {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       if (response.status === 200) {
+  //         console.log(response.data);
+  //         initialValues = response.data;
+  //         setFormdata("edit");
+  //       }
+  //     } catch (error) {
+  //       // console.error(error);
+  //       console.log("Data not found");
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
-  const { values, handleChange, handleSubmit } = useFormik({
+  const { values, handleChange, handleSubmit, setFieldValue } = useFormik({
     initialValues,
     // validationSchema: validationSchema,
     enableReinitialize: true,
@@ -172,6 +134,7 @@ const Test = () => {
       console.error(error);
     }
   };
+
   useEffect(() => {
     if (tosubmit.current) {
       // Trigger handleSubmit whenever form values change
@@ -181,13 +144,38 @@ const Test = () => {
       tosubmit.current = true;
     }
   }, [values, tosubmit.current]);
+
+  const [templatepdf, setTemplatepdf] = useState();
+
+  //Start
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  //End
+  const handleSelectChange = (e: any) => {
+    const template_name = e.target.value;
+
+    setFieldValue("template", template_name);
+
+    setTemplatepdf(template_name);
+    setOpen(true);
+    console.log("Template Name", template_name);
+  };
   return (
     <DashboardLayout>
       <DashboardNavbar />
+      <Dialog open={open} onClose={handleClose} maxWidth="xl">
+        <Template setOpen={setOpen} templatedata={templatepdf} />
+      </Dialog>
       <form onSubmit={handleSubmit}>
         <div>
           <Grid container>
-            <Grid sm={12} py={2}>
+            <Grid item sm={12} py={2}>
               <MDTypography
                 variant="h5"
                 color="info"
@@ -198,21 +186,22 @@ const Test = () => {
                   borderBottom: "2px solid #3873E8",
                 }}
               >
-                General Settings
+                General Configuration
               </MDTypography>
             </Grid>
 
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
                 <Card>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Default Unit/UoM
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Printing Template
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -222,19 +211,18 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Select default unit of measurement which suits your business most
+                        Select template you prefer to printing invoices/bill
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
+                    <Grid item sm={3} py={2}>
+                      <FormControl sx={{ minWidth: "90%" }}>
                         {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                         <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.default_unit}
-                          onChange={handleChange}
+                          variant="standard"
+                          value={values.template}
+                          onChange={handleSelectChange}
                           autoWidth={true}
-                          name="default_unit"
+                          name="template"
                         >
                           <MenuItem value="">
                             <em>Choose default unit</em>
@@ -251,17 +239,19 @@ const Test = () => {
                 </Card>
               </MDBox>
             </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
                 <Card>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Inventory Valuation
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Print Review
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -271,109 +261,14 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Select Inventory valuation method as per your accounting practice
+                        Show print and preview while creating invoice
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
-                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                        <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.inventory_valuation}
-                          onChange={handleChange}
-                          autoWidth={true}
-                          name="inventory_valuation"
-                        >
-                          <MenuItem value="">
-                            <em>chooose inventory valuation </em>
-                          </MenuItem>
-                          <MenuItem value={"AVCO"}>AVCO</MenuItem>
-                          <MenuItem value={"FIFO"}>FIFO</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Card>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Card style={{ height: "100%" }}>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Inventory Identifier
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Select type of number used in inventory identification
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
-                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                        <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.inventory_identifier}
-                          onChange={handleChange}
-                          autoWidth={true}
-                          name="inventory_identifier"
-                        >
-                          <MenuItem value="">
-                            <em>chooose inventory identifier </em>
-                          </MenuItem>
-                          <MenuItem value={"hi"}>Bar Code</MenuItem>
-                          <MenuItem value={"hello"}>Part No.</MenuItem>
-                          <MenuItem value={22}>Batch No.</MenuItem>
-                          <MenuItem value={22}>QR Code</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Card>
-              </MDBox>
-            </Grid>
-
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Card style={{ height: "100%" }}>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Secure Access
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Ask for username and password at the startup
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} p={2}>
+                    <Grid item sm={3} py={2}>
                       <Checkbox
-                        checked={values.secure_access}
+                        checked={values.print_preview}
                         onChange={handleChange}
-                        name="secure_access"
+                        name="print_preview"
                         sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
@@ -381,17 +276,18 @@ const Test = () => {
                 </Card>
               </MDBox>
             </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
-                <Card style={{ height: "100%" }}>
+                <Card>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Negative Stock Sale
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Watermark
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -401,14 +297,54 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Allows you to do billing in case of negative stock
+                        Test to be shown as watermark in printed documents
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
+                    <Grid item sm={3} py={2}>
+                      <FormControl sx={{ m: 1, minWidth: "70%" }}>
+                        <MDInput
+                          variant="standard"
+                          name="watermark"
+                          label=""
+                          value={values.watermark}
+                          onChange={handleChange}
+                        />
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Card>
+              </MDBox>
+            </Grid>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Card>
+                  <Grid container spacing={1} p={2}>
+                    <Grid item sm={12}>
+                      {" "}
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Payment Receipt
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      item
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Generate payment receipt on saving client payments
+                      </MDTypography>
+                    </Grid>
+                    <Grid item sm={3} py={2}>
                       <Checkbox
-                        checked={values.negative_stock_sale}
+                        checked={values.payment_receipt}
                         onChange={handleChange}
-                        name="negative_stock_sale"
+                        name="payment_receipt"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
                   </Grid>
@@ -416,17 +352,18 @@ const Test = () => {
               </MDBox>
             </Grid>
 
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
                 <Card>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Allows Task Confirmation
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Barcode Print Engine
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -436,32 +373,121 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Implement user confirmation for critical actions in the application.
+                        Select print engine for printing barcodes/labels
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
+                    <Grid item sm={3} py={2}>
+                      <FormControl sx={{ m: 1, minWidth: "70%" }}>
+                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                        <Select
+                          variant="standard"
+                          value={values.barcode_print_engine}
+                          onChange={handleChange}
+                          autoWidth={true}
+                          name="barcode_print_engine"
+                        >
+                          <MenuItem value="">
+                            <em>Choose default unit</em>
+                          </MenuItem>
+                          {engineoptions.map((unit) => (
+                            <MenuItem key={unit} value={unit}>
+                              {unit}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Card>
+              </MDBox>
+            </Grid>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Card>
+                  <Grid container spacing={1} p={2}>
+                    <Grid item sm={12}>
+                      {" "}
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Authorized Signatory
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      item
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Test to be shown in place authorized signatory
+                      </MDTypography>
+                    </Grid>
+                    <Grid item sm={3} py={2}>
+                      <FormControl sx={{ m: 1, minWidth: "90%" }}>
+                        <MDInput
+                          variant="standard"
+                          name="authorized_signatory"
+                          label=""
+                          value={values.authorized_signatory}
+                          onChange={handleChange}
+                        />
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </Card>
+              </MDBox>
+            </Grid>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Card>
+                  <Grid container spacing={1} p={2}>
+                    <Grid item sm={12}>
+                      {" "}
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Print Pos Invoice/Bill
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      item
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Allow printing of PoS Invoice/Bill
+                      </MDTypography>
+                    </Grid>
+                    <Grid item sm={3} p={2}>
                       <Checkbox
-                        checked={values.allow_task_confirmation}
+                        checked={values.print_pos_bill}
                         onChange={handleChange}
-                        name="allow_task_confirmation"
+                        name="print_pos_bill"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
                   </Grid>
                 </Card>
               </MDBox>
             </Grid>
-
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox px={2}>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
                 <Card>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Enable Manufacturing
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Print Pos Token
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -471,31 +497,33 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Allows you to create bill of materials and add assembled items in stock
+                        Allow printing PoS thermal token receipt for internal use
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
+                    <Grid item sm={3} p={2}>
                       <Checkbox
-                        checked={values.enable_manufacturing}
+                        checked={values.print_pos_token}
                         onChange={handleChange}
-                        name="enable_manufacturing"
+                        name="print_pos_token"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
                   </Grid>
                 </Card>
               </MDBox>
             </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox px={2}>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
                 <Card>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Price Catalog
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Invoice Print Count
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -505,15 +533,26 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Allows you to add multiple sale prices for the same item
+                        Enter no. of copies to be printed of cash and client invoices
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
-                      <Checkbox
-                        checked={values.price_catalog}
-                        onChange={handleChange}
-                        name="price_catalog"
-                      />
+                    <Grid item sm={3} p={2}>
+                      <FormControl sx={{ minWidth: "90%" }}>
+                        <MDInput
+                          variant="standard"
+                          name="invoice_print_cash"
+                          label=""
+                          value={values.invoice_print_cash}
+                          onChange={handleChange}
+                        />
+                        <MDInput
+                          variant="standard"
+                          name="invoice_print_client"
+                          label=""
+                          value={values.invoice_print_client}
+                          onChange={handleChange}
+                        />
+                      </FormControl>
                     </Grid>
                   </Grid>
                 </Card>
@@ -526,4 +565,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default View;

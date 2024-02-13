@@ -28,7 +28,8 @@ const Update = (props: any) => {
 
   const { values, touched, errors, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
-      expense_name: editData.expense_name,
+      old_expense_name: editData.expense_name,
+      expense_name: "",
     },
 
     // validationSchema: validationSchema,

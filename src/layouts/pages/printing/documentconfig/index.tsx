@@ -2,7 +2,7 @@ import MDInput from "components/MDInput";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
-import Card from "@mui/material/Card";
+import Paper from "@mui/material/Paper";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
@@ -38,47 +38,20 @@ const token = Cookies.get("token");
 //     .min(8, "Password should be of minimum 8 characters length")
 //     .required("Password is required"),
 // });
-const unitOptions = [
-  "UNT",
-  "TON",
-  "TBS",
-  "SQY",
-  "SQM",
-  "SQF",
-  "SET",
-  "ROL",
-  "QTL",
-  "PCS",
-  "PAC",
-  "NOS",
-  "MTR",
-  "MLT",
-  "KLR",
-  "KGS",
-  "GMS",
-  "DOZ",
-  "CTN",
-  "CMS",
-  "CCM",
-  "CBM",
-  "CAN",
-  "BUN",
-  "BTL",
-  "BOX",
-  "BKL",
-  "BDL",
-  "BAL",
-  "BAG",
-];
+
 let initialValues = {
-  secure_access: false,
-  negative_stock_sale: false,
-  allow_task_confirmation: false,
-  default_unit: "",
-  inventory_identifier: "",
-  inventory_valuation: "",
-  enable_manufacturing: false,
-  price_catalog: false,
+  print_preview: false,
+  payment_receipt: false,
+  print_pos_bill: false,
+  print_pos_token: false,
+
+  client_balance: false,
+  amount_paid: false,
+  mrp_discount: false,
+  staff_name: false,
+  mrp_column: false,
+  mobile_number: false,
+  price_item_description: false,
 };
 function debounce<T extends (...args: any[]) => any>(func: T, delay: number) {
   let timeout: ReturnType<typeof setTimeout>;
@@ -103,27 +76,27 @@ const Test = () => {
     []
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("http://10.0.20.121:8000/generalsettings", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.status === 200) {
-          console.log(response.data);
-          initialValues = response.data;
-          setFormdata("edit");
-        }
-      } catch (error) {
-        // console.error(error);
-        console.log("Data not found");
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get("http://10.0.20.121:8000/generalsettings", {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       if (response.status === 200) {
+  //         console.log(response.data);
+  //         initialValues = response.data;
+  //         setFormdata("edit");
+  //       }
+  //     } catch (error) {
+  //       // console.error(error);
+  //       console.log("Data not found");
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   const { values, handleChange, handleSubmit } = useFormik({
     initialValues,
@@ -187,7 +160,7 @@ const Test = () => {
       <form onSubmit={handleSubmit}>
         <div>
           <Grid container>
-            <Grid sm={12} py={2}>
+            <Grid item sm={12} py={2}>
               <MDTypography
                 variant="h5"
                 color="info"
@@ -198,21 +171,22 @@ const Test = () => {
                   borderBottom: "2px solid #3873E8",
                 }}
               >
-                General Settings
+                Document Configuration
               </MDTypography>
             </Grid>
 
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
-                <Card>
+                <Paper>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Default Unit/UoM
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Client Balance
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -222,211 +196,34 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Select default unit of measurement which suits your business most
+                        Show client account balance on printed documents.
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
-                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                        <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.default_unit}
-                          onChange={handleChange}
-                          autoWidth={true}
-                          name="default_unit"
-                        >
-                          <MenuItem value="">
-                            <em>Choose default unit</em>
-                          </MenuItem>
-                          {unitOptions.map((unit) => (
-                            <MenuItem key={unit} value={unit}>
-                              {unit}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Card>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Card>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Inventory Valuation
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Select Inventory valuation method as per your accounting practice
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
-                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                        <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.inventory_valuation}
-                          onChange={handleChange}
-                          autoWidth={true}
-                          name="inventory_valuation"
-                        >
-                          <MenuItem value="">
-                            <em>chooose inventory valuation </em>
-                          </MenuItem>
-                          <MenuItem value={"AVCO"}>AVCO</MenuItem>
-                          <MenuItem value={"FIFO"}>FIFO</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Card>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Card style={{ height: "100%" }}>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Inventory Identifier
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Select type of number used in inventory identification
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} py={2}>
-                      <FormControl sx={{ m: 1, minWidth: 70 }}>
-                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                        <Select
-                          labelId="demo-simple-select-autowidth-label"
-                          id="demo-simple-select-autowidth"
-                          value={values.inventory_identifier}
-                          onChange={handleChange}
-                          autoWidth={true}
-                          name="inventory_identifier"
-                        >
-                          <MenuItem value="">
-                            <em>chooose inventory identifier </em>
-                          </MenuItem>
-                          <MenuItem value={"hi"}>Bar Code</MenuItem>
-                          <MenuItem value={"hello"}>Part No.</MenuItem>
-                          <MenuItem value={22}>Batch No.</MenuItem>
-                          <MenuItem value={22}>QR Code</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Grid>
-                </Card>
-              </MDBox>
-            </Grid>
-
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Card style={{ height: "100%" }}>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Secure Access
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Ask for username and password at the startup
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} p={2}>
+                    <Grid item sm={3} py={2}>
                       <Checkbox
-                        checked={values.secure_access}
+                        checked={values.client_balance}
                         onChange={handleChange}
-                        name="secure_access"
+                        name="client_balance"
                         sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
                   </Grid>
-                </Card>
-              </MDBox>
-            </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox p={2}>
-                <Card style={{ height: "100%" }}>
-                  <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
-                      {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Negative Stock Sale
-                      </MDTypography>
-                    </Grid>
-                    <Grid
-                      sm={9}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-start",
-                        borderRight: "2px solid #3873E8",
-                      }}
-                    >
-                      {" "}
-                      <MDTypography variant="caption" p={2}>
-                        Allows you to do billing in case of negative stock
-                      </MDTypography>
-                    </Grid>
-                    <Grid sm={3} p={2}>
-                      <Checkbox
-                        checked={values.negative_stock_sale}
-                        onChange={handleChange}
-                        name="negative_stock_sale"
-                      />
-                    </Grid>
-                  </Grid>
-                </Card>
+                </Paper>
               </MDBox>
             </Grid>
 
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox p={2}>
-                <Card>
+                <Paper>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Allows Task Confirmation
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        MRP Based Discount
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -436,32 +233,33 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Implement user confirmation for critical actions in the application.
+                        Show MRP based total discount on PoS invoices/bills.
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
+                    <Grid item sm={3} p={2}>
                       <Checkbox
-                        checked={values.allow_task_confirmation}
+                        checked={values.mrp_discount}
                         onChange={handleChange}
-                        name="allow_task_confirmation"
+                        name="mrp_discount"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
                   </Grid>
-                </Card>
+                </Paper>
               </MDBox>
             </Grid>
-
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox px={2}>
-                <Card>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Enable Manufacturing
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Staff Name
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -471,31 +269,33 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Allows you to create bill of materials and add assembled items in stock
+                        Show staff name on printed documents.
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
+                    <Grid item sm={3} p={2}>
                       <Checkbox
-                        checked={values.enable_manufacturing}
+                        checked={values.staff_name}
                         onChange={handleChange}
-                        name="enable_manufacturing"
+                        name="staff_name"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
                   </Grid>
-                </Card>
+                </Paper>
               </MDBox>
             </Grid>
-            <Grid sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
-              <MDBox px={2}>
-                <Card>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
                   <Grid container spacing={1} p={2}>
-                    <Grid sm={12}>
+                    <Grid item sm={12}>
                       {" "}
-                      <MDTypography variant="body2" fontWeight="bold" px={2}>
-                        Price Catalog
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        MRP Column
                       </MDTypography>
                     </Grid>
                     <Grid
+                      item
                       sm={9}
                       sx={{
                         display: "flex",
@@ -505,18 +305,127 @@ const Test = () => {
                     >
                       {" "}
                       <MDTypography variant="caption" p={2}>
-                        Allows you to add multiple sale prices for the same item
+                        Show MRP column on printed documents.
                       </MDTypography>
                     </Grid>
-                    <Grid sm={3} p={2}>
+                    <Grid item sm={3} p={2}>
                       <Checkbox
-                        checked={values.price_catalog}
+                        checked={values.mrp_column}
                         onChange={handleChange}
-                        name="price_catalog"
+                        name="mrp_column"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
                       />
                     </Grid>
                   </Grid>
-                </Card>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid item sm={12}>
+                      {" "}
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Mobile Numbers
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      item
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Show mobile numbers on printed invoice documents.
+                      </MDTypography>
+                    </Grid>
+                    <Grid item sm={3} p={2}>
+                      <Checkbox
+                        checked={values.mobile_number}
+                        onChange={handleChange}
+                        name="mobile_number"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid item sm={12}>
+                      {" "}
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Print Item Description
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      item
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Show item description on printed documents.
+                      </MDTypography>
+                    </Grid>
+                    <Grid item sm={3} p={2}>
+                      <Checkbox
+                        checked={values.price_item_description}
+                        onChange={handleChange}
+                        name="price_item_description"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </MDBox>
+            </Grid>
+            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}>
+              <MDBox p={2}>
+                <Paper>
+                  <Grid container spacing={1} p={2}>
+                    <Grid item sm={12}>
+                      {" "}
+                      <MDTypography variant="caption" fontWeight="bold" px={2}>
+                        Amount Paid
+                      </MDTypography>
+                    </Grid>
+                    <Grid
+                      item
+                      sm={9}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        borderRight: "2px solid #3873E8",
+                      }}
+                    >
+                      {" "}
+                      <MDTypography variant="caption" p={2}>
+                        Show amount paid and balance on printed documents.
+                      </MDTypography>
+                    </Grid>
+                    <Grid item sm={3} py={2}>
+                      <Checkbox
+                        checked={values.amount_paid}
+                        onChange={handleChange}
+                        name="amount_paid"
+                        sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Paper>
               </MDBox>
             </Grid>
           </Grid>

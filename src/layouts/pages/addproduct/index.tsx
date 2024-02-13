@@ -82,23 +82,19 @@ const View = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "Group Name", accessor: "group_name" },
+      { Header: "Product Name", accessor: "product_name" },
+      { Header: "Group Name", accessor: "group" },
 
-      { Header: "HSN or SAC Code", accessor: "hsn_or_sac" },
-      { Header: "CGST", accessor: "cgst" },
-      { Header: "SGST", accessor: "sgst" },
-      { Header: "IGST", accessor: "igst" },
-      { Header: "CESS", accessor: "cess" },
+      { Header: "Brand Name", accessor: "brand" },
+
       { Header: "Action", accessor: "action" },
     ],
 
     rows: data.map((row, index) => ({
-      group_name: <MDTypography variant="p">{row.group_name}</MDTypography>,
-      hsn_or_sac: <MDTypography variant="p">{row.hsn_or_sac}</MDTypography>,
-      cgst: <MDTypography variant="p">{row.cgst}</MDTypography>,
-      sgst: <MDTypography variant="p">{row.sgst}</MDTypography>,
-      igst: <MDTypography variant="p">{row.igst}</MDTypography>,
-      cess: <MDTypography variant="p">{row.cess}</MDTypography>,
+      group: <MDTypography variant="p">{row.group}</MDTypography>,
+      product_name: <MDTypography variant="p">{row.product_name}</MDTypography>,
+      brand: <MDTypography variant="p">{row.brand}</MDTypography>,
+
       action: (
         <MDTypography variant="p">
           <IconButton
@@ -127,7 +123,7 @@ const View = () => {
         <Dialog open={open} onClose={handleClose} maxWidth="xl">
           <Create setOpen={setOpen} />
         </Dialog>
-        <Dialog open={openupdate} onClose={handleCloseupdate}>
+        <Dialog open={openupdate} onClose={handleCloseupdate} maxWidth="xl">
           <Update setOpenupdate={setOpenupdate} editData={editData} />
         </Dialog>
       </Grid>

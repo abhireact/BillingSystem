@@ -22,6 +22,8 @@ const token = Cookies.get("token");
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { message } from "antd";
 import Checkbox from "@mui/material/Checkbox";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 //import {ChangeEvent} from "react";
 
 // const validationSchema = yup.object({
@@ -85,20 +87,20 @@ let initialValues = {
   opening_stock: "",
   opening_stock_price: "",
   hsn_sac_code: "",
-  cgst: 0,
-  sgst: 0,
-  igst: 0,
-  cess: 0,
-  product_description: "",
+  cgst: "",
+  sgst: "",
+  igst: "",
+  cess: "",
+  description: "",
   print_description: false,
   low_level_limit: "",
   product_type: "",
   serial_no: "",
 
-  one_click_sale: true,
-  enable_tracking: true,
-  print_serial_no: true,
-  not_for_sale: true,
+  one_click_sale: false,
+  enable_tracking: false,
+  print_serial_no: false,
+  not_for_sale: false,
 };
 
 const Create = (props: any) => {
@@ -106,6 +108,47 @@ const Create = (props: any) => {
   const handleClose = () => {
     setOpen(false);
   };
+  const [groupsoption, setGroupsoption] = useState([]);
+  const [brandsoption, setBrandsoption] = useState([]);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await axios.get("http://10.0.20.121:8000/add_group", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          console.log(response.data, "my groups data");
+          setGroupsoption(response.data);
+        }
+      } catch (error) {
+        // console.error(error);
+        console.log("Data not found");
+      }
+    };
+    const fetchBrands = async () => {
+      try {
+        const response = await axios.get("http://10.0.20.121:8000/brands", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 200) {
+          console.log(response.data, "my groups data");
+          setBrandsoption(response.data);
+        }
+      } catch (error) {
+        // console.error(error);
+        console.log("Data not found");
+      }
+    };
+    fetchGroups();
+    fetchBrands();
+  }, []);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues,
@@ -139,7 +182,7 @@ const Create = (props: any) => {
     <form onSubmit={handleSubmit}>
       <Card>
         <Grid container>
-          <Grid sm={6} container sx={{ display: "flex", justifyContent: "center" }}>
+          <Grid item sm={6} container sx={{ display: "flex", justifyContent: "center" }}>
             <MDBox>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
                 <MDTypography variant="body2" fontWeight="bold" py={2}>
@@ -148,32 +191,49 @@ const Create = (props: any) => {
               </Grid>
 
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  variant="standard"
-                  required
-                  name="group"
-                  label="Group"
-                  value={values.group}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.group && Boolean(errors.group)}
-                  helperText={touched.group && errors.group}
-                  mb={10}
-                />
+                <FormControl sx={{ m: 1, minWidth: "100%" }}>
+                  {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                  <Select
+                    label="choose group"
+                    value={values.group}
+                    onChange={handleChange}
+                    autoWidth={true}
+                    name="group"
+                    variant="standard"
+                  >
+                    <MenuItem value="">
+                      <em>Choose Group</em>
+                    </MenuItem>
+                    {groupsoption.map((groups, index) => (
+                      <MenuItem key={index} value={groups.group_name}>
+                        {groups.group_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
 
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  variant="standard"
-                  name="brand"
-                  label="Brand"
-                  value={values.brand}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.brand && Boolean(errors.brand)}
-                  helperText={touched.brand && errors.brand}
-                  mb={10}
-                />
+                <FormControl sx={{ m: 1, minWidth: "100%" }}>
+                  {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                  <Select
+                    label="choose group"
+                    value={values.brand}
+                    onChange={handleChange}
+                    autoWidth={true}
+                    name="brand"
+                    variant="standard"
+                  >
+                    <MenuItem value="">
+                      <em>Choose Brand</em>
+                    </MenuItem>
+                    {brandsoption.map((brands, index) => (
+                      <MenuItem key={index} value={brands.brand_name}>
+                        {brands.brand_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                 <MDInput
@@ -287,19 +347,27 @@ const Create = (props: any) => {
                 </MDTypography>
               </Grid>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  variant="standard"
-                  type="number"
-                  required
-                  name="unit"
-                  label="Unit"
-                  value={values.unit}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.unit && Boolean(errors.unit)}
-                  helperText={touched.unit && errors.unit}
-                  mb={10}
-                />
+                <FormControl sx={{ m: 1, minWidth: "100%" }}>
+                  {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                  <Select
+                    label="choose group"
+                    value={values.unit}
+                    onChange={handleChange}
+                    autoWidth={true}
+                    name="unit"
+                    variant="standard"
+                  >
+                    <MenuItem value="testunit1">
+                      <em>testunit1</em>
+                    </MenuItem>
+                    <MenuItem value="testunit2">
+                      <em>testunit2</em>
+                    </MenuItem>
+                    <MenuItem value="testunit">
+                      <em>testunit</em>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                 <MDInput
@@ -319,7 +387,7 @@ const Create = (props: any) => {
                 <MDInput
                   variant="standard"
                   type="number"
-                  name="Opening_Stock_Price"
+                  name="opening_stock_price"
                   label="opening stock price"
                   value={values.opening_stock_price}
                   onChange={handleChange}
@@ -332,7 +400,7 @@ const Create = (props: any) => {
             </MDBox>
           </Grid>
 
-          <Grid sm={6} container sx={{ display: "flex", justifyContent: "center" }}>
+          <Grid item sm={6} container sx={{ display: "flex", justifyContent: "center" }}>
             <MDBox>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>
                 <MDTypography variant="body2" fontWeight="bold" pt={2}>
@@ -487,13 +555,13 @@ const Create = (props: any) => {
                   multiline
                   rows={3}
                   variant="standard"
-                  name="product_description"
+                  name="description"
                   label=""
-                  value={values.product_description}
+                  value={values.description}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.product_description && Boolean(errors.product_description)}
-                  helperText={touched.product_description && errors.product_description}
+                  error={touched.description && Boolean(errors.description)}
+                  helperText={touched.description && errors.description}
                 />
               </Grid>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "flex-start" }}>

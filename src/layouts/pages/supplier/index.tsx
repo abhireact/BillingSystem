@@ -47,7 +47,7 @@ const View = () => {
   const handleDeleteData = async (row: any) => {
     console.log(row, "Delete Data");
     try {
-      const deletedata = await axios.delete("http://10.0.20.121:8000/products", {
+      const deletedata = await axios.delete("http://10.0.20.121:8000/unitmaster", {
         data: {
           ...row,
         },
@@ -65,7 +65,7 @@ const View = () => {
   };
   useEffect(() => {
     axios
-      .get("", {
+      .get("http://10.0.20.121:8000/suppliers", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -82,13 +82,16 @@ const View = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "Expense Name", accessor: "expense_name" },
-
-      { Header: "Action", accessor: "action" },
+      { Header: "Company Name", accessor: "company_name" },
+      { Header: "Contact Person", accessor: "contact_person" },
+      { Header: "Contact Number", accessor: "contact_no" },
+      { Header: "Action", accessor: "action", width: "30%" },
     ],
 
     rows: data.map((row, index) => ({
-      expense_name: <MDTypography variant="p">{row.expense_name}</MDTypography>,
+      company_name: <MDTypography variant="p">{row.company_name}</MDTypography>,
+      contact_person: <MDTypography variant="p">{row.contact_person}</MDTypography>,
+      contact_no: <MDTypography variant="p">{row.contact_no}</MDTypography>,
 
       action: (
         <MDTypography variant="p">
@@ -110,15 +113,15 @@ const View = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDTypography>Manage Expenses</MDTypography>
+      <MDTypography>Existing Supplier(s)</MDTypography>
       <Grid sx={{ display: "flex", justifyContent: "flex-end" }}>
         <MDButton variant="contained" color="info" onClick={handleClickOpen}>
-          + Add
+          + Add New Supplier
         </MDButton>
-        <Dialog open={open} onClose={handleClose} maxWidth="xl">
+        <Dialog open={open} onClose={handleClose}>
           <Create setOpen={setOpen} />
         </Dialog>
-        <Dialog open={openupdate} onClose={handleCloseupdate} maxWidth="xl">
+        <Dialog open={openupdate} onClose={handleCloseupdate}>
           <Update setOpenupdate={setOpenupdate} editData={editData} />
         </Dialog>
       </Grid>

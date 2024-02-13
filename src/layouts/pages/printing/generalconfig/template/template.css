@@ -1,0 +1,55 @@
+#invoice-container {
+  width: 800px;
+  margin: 0 auto;
+  font-family: sans-serif;
+  border-collapse: collapse;
+}
+
+.table-header-blue {
+  background-color: #c9d7dd;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
+.table-header-cell {
+  width: 150px; /* Set your desired width */
+  background-color: #C9D0D3; /* Set your desired background color */
+}
+.table-header-blue-cell {
+  width: 150px; /* Set your desired width */
+  background-color: #75cbef; /* Set your desired background color */
+}
+.table-header {
+  background-color: #eeedeb;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.table-row {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.table-cell {
+  text-align: left;
+  padding-right: 20px;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.italic {
+  font-style: italic;
+}
+.thead {
+  padding-top: 10px; /* Adjust as needed */
+  padding-bottom: 10px; /* Adjust as needed */
+}
