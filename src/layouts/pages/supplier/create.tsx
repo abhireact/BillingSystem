@@ -81,32 +81,103 @@ let initialValues = {
   remarks: "",
 };
 
-const Create = (props: any) => {
-  const { setOpen } = props;
+const Update = (props: any) => {
+  const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
   };
+  if (method === "PUT") {
+    initialValues = {
+      company_name: editData.company_name,
+      address: editData.address,
+      city: editData.city,
+      state: editData.state,
+      pincode: editData.pincode,
+      country: editData.country,
+      email: editData.email,
+      phone_no: editData.phone_no,
+      contact_no: editData.contact_no,
+      pan_no: editData.pan_no,
+      gst_in: editData.gst_in,
+      ac_type: editData.ac_type,
+      opening_balance: editData.opening_balance,
+      bank_name: editData.bank_name,
+      ac_no: editData.ac_no,
+      ifsc_code: editData.ifsc_code,
+
+      contact_person: editData.contact_person,
+      remarks: editData.remarks,
+    };
+  } else {
+    initialValues = {
+      company_name: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: "",
+      country: "",
+      email: "",
+      phone_no: "",
+      contact_no: "",
+      pan_no: "",
+      gst_in: "",
+      ac_type: "",
+      opening_balance: "",
+      bank_name: "",
+      ac_no: "",
+      ifsc_code: "",
+
+      contact_person: "",
+      remarks: "",
+    };
+  }
   const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
     useFormik({
       initialValues,
       // validationSchema: validationSchema,
       enableReinitialize: true,
-      onSubmit: async (values, action) => {
+      onSubmit: (values, action) => {
         console.log({ ...values }, "submit values");
-        try {
-          let sendData = values;
 
-          const response = await axios.post("http://10.0.20.121:8000/suppliers", sendData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.status === 200) {
-            console.log("Created Successfully");
+        const handleCreateSubmit = async () => {
+          console.log({ ...values }, "submit values");
+          try {
+            let sendData = values;
+
+            const response = await axios.post("http://10.0.20.121:8000/suppliers", sendData, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (response.status === 200) {
+              console.log("Created Successfully");
+            }
+          } catch (error) {
+            console.error(error);
           }
-        } catch (error) {
-          console.error(error);
+        };
+        const handleUpdateSubmit = async () => {
+          try {
+            let sendData = { ...values, old_company_name: editData.company_name };
+
+            const response = await axios.put("http://10.0.20.121:8000/suppliers", sendData, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (response.status === 200) {
+              console.log("Updated Successfully");
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        if (method === "PUT") {
+          handleUpdateSubmit();
+        } else {
+          handleCreateSubmit();
         }
       },
     });
@@ -167,6 +238,7 @@ const Create = (props: any) => {
               <Grid item sm={12}>
                 <Autocomplete
                   sx={{ width: "100%" }}
+                  value={values.state}
                   onChange={(event, value) => {
                     handleChange({
                       target: { name: "state", value },
@@ -175,7 +247,6 @@ const Create = (props: any) => {
                   options={states}
                   renderInput={(params: any) => (
                     <FormField
-                      required
                       label="States"
                       InputLabelProps={{ shrink: true }}
                       name="state"
@@ -428,4 +499,4 @@ const Create = (props: any) => {
   );
 };
 
-export default Create;
+export default Update;

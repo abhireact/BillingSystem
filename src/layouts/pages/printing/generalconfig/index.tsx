@@ -28,10 +28,10 @@ const token = Cookies.get("token");
 //     .min(8, "Password should be of minimum 8 characters length")
 //     .required("Password is required"),
 // });
-const unitOptions = ["A4 trend", "A5 trend"];
+const unitOptions = ["A4 Style1", "A4 Style2"];
 const engineoptions = ["TSC", "Zebra"];
 let initialValues = {
-  template: "A4 trend",
+  template: "A4 Style1",
   print_preview: false,
   watermark: "",
   payment_receipt: false,

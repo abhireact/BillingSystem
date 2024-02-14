@@ -90,6 +90,8 @@ import GeneralConfig from "layouts/pages/printing/generalconfig";
 import DocumentConfig from "layouts/pages/printing/documentconfig";
 import DocumentHeader from "layouts/pages/printing/documentheaders";
 import DocumentTerm from "layouts/pages/printing/documentterms";
+import LLStocks from "layouts/pages/low_level_stocks";
+import StockAvailability from "layouts/pages/stock_availability";
 import Supplier from "layouts/pages/supplier";
 const routes = [
   {
@@ -215,6 +217,18 @@ const routes = [
             key: "unitmaster",
             route: "/pages/intern/unitmaster",
             component: <UnitMaster />,
+          },
+          {
+            name: "Low Level Stocks",
+            key: "lowlevelstocks",
+            route: "/pages/intern/lowlevelstocks",
+            component: <LLStocks />,
+          },
+          {
+            name: "Stock Availablity",
+            key: "stockavailability",
+            route: "/pages/intern/stockavailability",
+            component: <StockAvailability />,
           },
           {
             name: "Add Product",

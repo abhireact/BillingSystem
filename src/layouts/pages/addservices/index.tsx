@@ -11,15 +11,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Create from "./create";
-import Update from "./update";
+
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
 
 const View = () => {
   const [data, setData] = useState([]);
+
+  const [method, setMethod] = useState("POST");
   //Start
   const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
+  const handleOpen = () => {
+    setMethod("POST");
     setOpen(true);
   };
 
@@ -29,20 +32,14 @@ const View = () => {
   //End
   //Update Dialog Box Start
   const [editData, setEditData] = useState(null);
-  const [openupdate, setOpenupdate] = useState(false);
 
   const handleOpenupdate = (index: number) => {
-    setOpenupdate(true);
     const main_data = data[index];
     console.log(main_data, "maindata");
-
-    setOpenupdate(true);
+    setMethod("PUT");
     setEditData(main_data);
+    setOpen(true);
   };
-
-  const handleCloseupdate = () => {
-    setOpenupdate(false);
-  }; //End
 
   const handleDeleteData = async (row: any) => {
     console.log(row, "Delete Data");
@@ -116,14 +113,12 @@ const View = () => {
       <DashboardNavbar />
       <MDTypography>Services</MDTypography>
       <Grid sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <MDButton variant="contained" color="info" onClick={handleClickOpen}>
+        <MDButton variant="contained" color="info" onClick={handleOpen}>
           + Add
         </MDButton>
+
         <Dialog open={open} onClose={handleClose}>
-          <Create setOpen={setOpen} />
-        </Dialog>
-        <Dialog open={openupdate} onClose={handleCloseupdate}>
-          <Update setOpenupdate={setOpenupdate} editData={editData} />
+          <Create setOpen={setOpen} editData={editData} method={method} />
         </Dialog>
       </Grid>
       <DataTable table={dataTableData} />

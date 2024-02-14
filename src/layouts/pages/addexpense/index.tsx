@@ -11,37 +11,33 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Create from "./create";
-import Update from "./update";
+
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
 
 const View = () => {
   const [data, setData] = useState([]);
-  //Start
+  const [method, setMethod] = useState("Post");
+
+  //Update Dialog Box Start
+  const [editData, setEditData] = useState(null);
   const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
+
+  const handleOpenUpdate = (index: number) => {
+    const main_data = data[index];
+    console.log(main_data, "maindata");
+    setMethod("PUT");
+
+    setEditData(main_data);
+    setOpen(true);
+  };
+  const handleOpenCreate = () => {
+    setMethod("POST");
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-  };
-  //End
-  //Update Dialog Box Start
-  const [editData, setEditData] = useState(null);
-  const [openupdate, setOpenupdate] = useState(false);
-
-  const handleOpenupdate = (index: number) => {
-    setOpenupdate(true);
-    const main_data = data[index];
-    console.log(main_data, "maindata");
-
-    setOpenupdate(true);
-    setEditData(main_data);
-  };
-
-  const handleCloseupdate = () => {
-    setOpenupdate(false);
   }; //End
 
   const handleDeleteData = async (row: any) => {
@@ -65,7 +61,7 @@ const View = () => {
   };
   useEffect(() => {
     axios
-      .get("", {
+      .get("http://10.0.20.121:8000/expenses", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -82,19 +78,19 @@ const View = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "Expense Name", accessor: "expense_name" },
+      { Header: "Expense Type", accessor: "expense_type" },
 
       { Header: "Action", accessor: "action" },
     ],
 
     rows: data.map((row, index) => ({
-      expense_name: <MDTypography variant="p">{row.expense_name}</MDTypography>,
+      expense_type: <MDTypography variant="p">{row.expense_type}</MDTypography>,
 
       action: (
         <MDTypography variant="p">
           <IconButton
             onClick={() => {
-              handleOpenupdate(index);
+              handleOpenUpdate(index);
               console.log(index);
             }}
           >
@@ -112,14 +108,12 @@ const View = () => {
       <DashboardNavbar />
       <MDTypography>Manage Expenses</MDTypography>
       <Grid sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <MDButton variant="contained" color="info" onClick={handleClickOpen}>
+        <MDButton variant="contained" color="info" onClick={handleOpenCreate}>
           + Add
         </MDButton>
+
         <Dialog open={open} onClose={handleClose} maxWidth="xl">
-          <Create setOpen={setOpen} />
-        </Dialog>
-        <Dialog open={openupdate} onClose={handleCloseupdate} maxWidth="xl">
-          <Update setOpenupdate={setOpenupdate} editData={editData} />
+          <Create setOpen={setOpen} editData={editData} method={method} />
         </Dialog>
       </Grid>
       <DataTable table={dataTableData} />

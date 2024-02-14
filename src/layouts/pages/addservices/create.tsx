@@ -15,14 +15,13 @@ import MDTypography from "components/MDTypography";
 import MDDropzone from "components/MDDropzone";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
-import { FormControlLabel, FormLabel, RadioGroup } from "@mui/material";
+import { FormControlLabel, FormLabel, InputLabel, RadioGroup } from "@mui/material";
 import { useState, useEffect } from "react";
 import MDAvatar from "components/MDAvatar";
 const token = Cookies.get("token");
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { message } from "antd";
 import Checkbox from "@mui/material/Checkbox";
-import TextField from "@mui/material/TextField";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 let initialValues = {
@@ -41,10 +40,8 @@ let initialValues = {
   service_description: "",
   print_description: false,
 };
-
 const Create = (props: any) => {
-  const { setOpen } = props;
-
+  const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
   };
@@ -71,32 +68,96 @@ const Create = (props: any) => {
 
     fetchGroups();
   }, []);
+  if (method === "PUT") {
+    initialValues = {
+      group: editData.group,
+      item_code: editData.item_code,
+      service_name: editData.service_name,
+      print_name: editData.print_name,
+      service_charge: editData.service_charge,
+      min_service_charge: editData.min_service_charge,
+      sale_discount: editData.sale_discount,
+      hsn_sac_code: editData.hsn_sac_code,
+      cgst: editData.cgst,
+      sgst: editData.sgst,
+      igst: editData.igst,
+      cess: editData.cess,
+      service_description: editData.service_description,
+      print_description: editData.print_description,
+    };
+  } else {
+    initialValues = {
+      group: "",
+      item_code: "",
+      service_name: "",
+      print_name: "",
+      service_charge: "",
+      min_service_charge: "",
+      sale_discount: "",
+      hsn_sac_code: "",
+      cgst: 0,
+      sgst: 0,
+      igst: 0,
+      cess: 0,
+      service_description: "",
+      print_description: false,
+    };
+  }
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues,
     // validationSchema: validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, action) => {
-      let sendData = values;
+      const handleCreateSubmit = async () => {
+        let sendData = values;
 
-      await axios
-        .post("http://10.0.20.121:8000/services", sendData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          if (response.status === 200) {
-            console.log("Created Successfully");
-            handleClose();
-            message.success("Created SuccessFully");
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          message.error("Error Occured");
-        });
+        await axios
+          .post("http://10.0.20.121:8000/services", sendData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              console.log("Created Successfully");
+              handleClose();
+              message.success("Created SuccessFully");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            message.error("Error Occured");
+          });
+      };
+      const handleUpdateSubmit = async () => {
+        let sendData = { ...values, old_service_name: editData.service_name };
+
+        await axios
+          .put("http://10.0.20.121:8000/services", sendData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              console.log("Updated Successfully");
+              handleClose();
+              message.success("Updated SuccessFully");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            message.error("Error Occured");
+          });
+      };
+      if (method === "PUT") {
+        handleUpdateSubmit();
+      } else {
+        handleCreateSubmit();
+      }
     },
   });
 
@@ -114,7 +175,7 @@ const Create = (props: any) => {
 
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                 <FormControl sx={{ m: 1, minWidth: "100%" }}>
-                  {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                  <InputLabel>Choose Group</InputLabel>
                   <Select
                     label="choose group"
                     value={values.group}
@@ -123,9 +184,6 @@ const Create = (props: any) => {
                     name="group"
                     variant="standard"
                   >
-                    <MenuItem value="">
-                      <em>Choose Group</em>
-                    </MenuItem>
                     {groupsoption.map((groups, index) => (
                       <MenuItem key={index} value={groups.group_name}>
                         {groups.group_name}

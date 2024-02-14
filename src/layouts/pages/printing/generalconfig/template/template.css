@@ -6,7 +6,7 @@
 }
 
 .table-header-blue {
-  background-color: #c9d7dd;
+  background-color:  #BDD1EF;
   padding: 20px;
   border-bottom: 1px solid #ddd;
 }
@@ -46,10 +46,17 @@
   font-weight: bold;
 }
 
-.italic {
-  font-style: italic;
+.paddingtenleft {
+ padding-left: 10px;
 }
 .thead {
   padding-top: 10px; /* Adjust as needed */
   padding-bottom: 10px; /* Adjust as needed */
+}
+
+.table-header-body{
+ background-color: #dee4ec;
+}
+.table-header-blue-body{
+ background-color: #a8d3e5 ;
 }

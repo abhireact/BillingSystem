@@ -36,42 +36,104 @@ let initialValues = {
 };
 
 const Create = (props: any) => {
-  const { setOpen } = props;
+  const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
   };
-
+  if (method === "PUT") {
+    initialValues = {
+      date: editData.date,
+      expense_type: editData.expense_type,
+      amount: editData.amount,
+      paid_to: editData.paid_to,
+      pay_mode: editData.pay_mode,
+      payment_ref_no: editData.payment_ref_no,
+      paid_by: editData.paid_by,
+      remarks: editData.remarks,
+    };
+  } else {
+    initialValues = {
+      date: "",
+      expense_type: "",
+      amount: "",
+      paid_to: "",
+      pay_mode: "",
+      payment_ref_no: "",
+      paid_by: "",
+      remarks: "",
+    };
+  }
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues,
     // validationSchema: validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, action) => {
-      let sendData = values;
+      const handleCreateSubmit = async () => {
+        let sendData = values;
 
-      await axios
-        .post("http://10.0.20.121:8000/products", sendData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          if (response.status === 200) {
-            console.log("Created Successfully");
-            handleClose();
-            message.success("Created SuccessFully");
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          message.error("Error Occured");
-        });
+        await axios
+          .post("http://10.0.20.121:8000/expenses", sendData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              console.log("Created Successfully");
+              handleClose();
+              message.success("Created SuccessFully");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            message.error("Error Occured");
+          });
+      };
+      const handleUpdateSubmit = async () => {
+        let sendData = {
+          ...values,
+          old_date: editData.date,
+          old_expense_type: editData.expense_type,
+          old_amount: editData.amount,
+          old_paid_to: editData.paid_to,
+          old_pay_mode: editData.pay_mode,
+          old_payment_ref_no: editData.payment_ref_no,
+          old_paid_by: editData.paid_by,
+          old_remarks: editData.remarks,
+        };
+
+        await axios
+          .put("http://10.0.20.121:8000/expenses", sendData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              console.log("Created Successfully");
+              handleClose();
+              message.success("Created SuccessFully");
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            message.error("Error Occured");
+          });
+      };
+      if (method === "PUT") {
+        handleUpdateSubmit();
+      } else {
+        handleCreateSubmit();
+      }
     },
   });
 
   return (
     <form onSubmit={handleSubmit}>
       <Card>
+        {" "}
         <MDBox p={4}>
           <Grid container>
             <Grid item sm={12} sx={{ display: "flex", justifyContent: "center" }}>
@@ -161,7 +223,7 @@ const Create = (props: any) => {
               </MDBox>
             </Grid>
 
-            <Grid item sm={6} container sx={{ display: "flex", justifyContent: "center" }}>
+            <Grid sm={6} container sx={{ display: "flex", justifyContent: "center" }}>
               <MDBox>
                 <Grid item sm={12}>
                   <MDInput
@@ -202,7 +264,6 @@ const Create = (props: any) => {
                     helperText={touched.remarks && errors.remarks}
                   />
                 </Grid>
-
                 <MDButton color="info" type="submit">
                   Submit -&gt;
                 </MDButton>
