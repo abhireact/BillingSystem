@@ -10,38 +10,34 @@ import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState, useEffect } from "react";
 import axios from "axios";
+
 import Create from "./create";
-import Update from "./update";
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
 
 const View = () => {
   const [data, setData] = useState([]);
-  //Start
+  const [method, setMethod] = useState("Post");
+
+  //Update Dialog Box Start
+  const [editData, setEditData] = useState(null);
   const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
+
+  const handleOpenUpdate = (index: number) => {
+    const main_data = data[index];
+    console.log(main_data, "maindata");
+    setMethod("PUT");
+
+    setEditData(main_data);
+    setOpen(true);
+  };
+  const handleOpenCreate = () => {
+    setMethod("POST");
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-  };
-  //End
-  //Update Dialog Box Start
-  const [editData, setEditData] = useState(null);
-  const [openupdate, setOpenupdate] = useState(false);
-
-  const handleOpenupdate = (index: number) => {
-    setOpenupdate(true);
-    const main_data = data[index];
-    console.log(main_data, "maindata");
-
-    setOpenupdate(true);
-    setEditData(main_data);
-  };
-
-  const handleCloseupdate = () => {
-    setOpenupdate(false);
   }; //End
 
   const handleDeleteData = async (row: any) => {
@@ -94,7 +90,7 @@ const View = () => {
         <MDTypography variant="p">
           <IconButton
             onClick={() => {
-              handleOpenupdate(index);
+              handleOpenUpdate(index);
               console.log(index);
             }}
           >
@@ -110,16 +106,15 @@ const View = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDTypography>Unit Master</MDTypography>
-      <Grid sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <MDButton variant="contained" color="info" onClick={handleClickOpen}>
+
+      <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
+        <MDTypography>Unit Master</MDTypography>
+        <MDButton variant="contained" color="info" onClick={handleOpenCreate}>
           + Add
         </MDButton>
+
         <Dialog open={open} onClose={handleClose}>
-          <Create setOpen={setOpen} />
-        </Dialog>
-        <Dialog open={openupdate} onClose={handleCloseupdate}>
-          <Update setOpenupdate={setOpenupdate} editData={editData} />
+          <Create setOpen={setOpen} editData={editData} method={method} />
         </Dialog>
       </Grid>
       <DataTable table={dataTableData} />

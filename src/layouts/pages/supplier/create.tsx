@@ -81,7 +81,7 @@ let initialValues = {
   remarks: "",
 };
 
-const Update = (props: any) => {
+const Create = (props: any) => {
   const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
@@ -184,319 +184,348 @@ const Update = (props: any) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card>
+      <MDBox pb={4} pt={2} mr={-20} pl={4}>
         <Grid container>
-          <Grid item sm={6} container sx={{ display: "flex", justifyContent: "center" }}>
-            <MDBox p={4} px={8}>
-              <Grid item sm={12}>
-                <MDTypography variant="h5">Supplier Details</MDTypography>
-              </Grid>
-              <Grid item sm={12}>
-                <MDInput
-                  required
-                  autoComplete="off"
-                  variant="standard"
-                  name="company_name"
-                  label="Company Name"
-                  value={values.company_name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.company_name && Boolean(errors.company_name)}
-                  helperText={touched.company_name && errors.company_name}
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <MDInput
-                  col={3}
-                  multiline
-                  rows={3}
-                  variant="standard"
-                  name="address"
-                  label="Address"
-                  value={values.address}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.address && Boolean(errors.address)}
-                  helperText={touched.address && errors.address}
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <MDInput
-                  required
-                  autoComplete="off"
-                  variant="standard"
-                  name="city"
-                  label="City"
-                  value={values.city}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.city && Boolean(errors.city)}
-                  helperText={touched.city && errors.city}
-                  mt={10}
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <Autocomplete
-                  sx={{ width: "100%" }}
-                  value={values.state}
-                  onChange={(event, value) => {
-                    handleChange({
-                      target: { name: "state", value },
-                    });
-                  }}
-                  options={states}
-                  renderInput={(params: any) => (
-                    <FormField
-                      label="States"
-                      InputLabelProps={{ shrink: true }}
-                      name="state"
-                      onChange={handleChange}
-                      value={values.state}
-                      {...params}
-                      variant="outlined"
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <MDInput
-                  required
-                  autoComplete="off"
-                  variant="standard"
-                  name="pincode"
-                  label="Pincode"
-                  value={values.pincode}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.pincode && Boolean(errors.pincode)}
-                  helperText={touched.pincode && errors.pincode}
-                  mt={10}
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <MDInput
-                  variant="standard"
-                  name="country"
-                  label="Country"
-                  value={values.country}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.country && Boolean(errors.country)}
-                  helperText={touched.country && errors.country}
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <MDInput
-                  variant="standard"
-                  name="email"
-                  label="Email"
-                  value={values.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.email && Boolean(errors.email)}
-                  helperText={touched.email && errors.email}
-                />
-              </Grid>
-              <Grid item sm={12}>
-                <MDInput
-                  required
-                  variant="standard"
-                  name="phone_no"
-                  label="Phone No."
-                  value={values.phone_no}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.phone_no && Boolean(errors.phone_no)}
-                  helperText={touched.phone_no && errors.phone_no}
-                />
-              </Grid>
-
-              <Grid sm={12} item>
-                <MDTypography variant="h5">Tax Details</MDTypography>
-              </Grid>
-              <Grid sm={12} item>
-                <MDInput
-                  variant="standard"
-                  name="pan_no"
-                  label="PAN No."
-                  value={values.pan_no}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.pan_no && Boolean(errors.pan_no)}
-                  helperText={touched.pan_no && errors.pan_no}
-                />
-              </Grid>
-              <Grid sm={12} item>
-                <MDInput
-                  variant="standard"
-                  name="gst_in"
-                  label="GSTIN"
-                  value={values.gst_in}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.gst_in && Boolean(errors.gst_in)}
-                  helperText={touched.gst_in && errors.gst_in}
-                />
-              </Grid>
-            </MDBox>
+          <Grid item sm={12}>
+            <MDTypography variant="body2" fontWeight="bold">
+              Supplier Details
+            </MDTypography>
           </Grid>
-          <Grid item sm={6} container sx={{ display: "flex", justifyContent: "flex-start" }}>
-            <MDBox p={4} px={8}>
-              <Grid sm={12} item>
-                <MDTypography variant="h5">Bank Details</MDTypography>
-              </Grid>
-              <Grid sm={12} item>
-                <Autocomplete
-                  sx={{ width: "100%" }}
-                  onChange={(event, value) => {
-                    handleChange({
-                      target: { name: "bank_name", value },
-                    });
-                  }}
-                  options={bank_names}
-                  renderInput={(params: any) => (
-                    <FormField
-                      label="Bank Name"
-                      InputLabelProps={{ shrink: true }}
-                      name="bank_name"
+          <Grid item sm={5}>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              required
+              autoComplete="off"
+              variant="standard"
+              name="company_name"
+              label="Company Name"
+              value={values.company_name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.company_name && Boolean(errors.company_name)}
+              helperText={touched.company_name && errors.company_name}
+            />
+          </Grid>
+          <Grid item sm={5}>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              variant="standard"
+              name="address"
+              label="Address"
+              value={values.address}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.address && Boolean(errors.address)}
+              helperText={touched.address && errors.address}
+            />
+          </Grid>
+          <Grid item sm={5}>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              required
+              autoComplete="off"
+              variant="standard"
+              name="city"
+              label="City"
+              value={values.city}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.city && Boolean(errors.city)}
+              helperText={touched.city && errors.city}
+            />
+          </Grid>
+          <Grid item sm={5}>
+            <Autocomplete
+              sx={{ width: "70%" }}
+              value={values.state}
+              onChange={(event, value) => {
+                handleChange({
+                  target: { name: "state", value },
+                });
+              }}
+              options={states}
+              renderInput={(params: any) => (
+                <FormField
+                  label="States"
+                  InputLabelProps={{ shrink: true }}
+                  name="state"
+                  onChange={handleChange}
+                  value={values.state}
+                  {...params}
+                  variant="outlined"
+                />
+              )}
+            />
+          </Grid>
+          <Grid item sm={5}>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              required
+              autoComplete="off"
+              variant="standard"
+              name="pincode"
+              label="Pincode"
+              value={values.pincode}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.pincode && Boolean(errors.pincode)}
+              helperText={touched.pincode && errors.pincode}
+            />
+          </Grid>
+          <Grid item sm={5}>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              variant="standard"
+              name="country"
+              label="Country"
+              value={values.country}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.country && Boolean(errors.country)}
+              helperText={touched.country && errors.country}
+            />
+          </Grid>
+          <Grid item sm={5}>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              variant="standard"
+              name="email"
+              label="Email"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.email && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
+            />
+          </Grid>
+          <Grid item sm={5}>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              required
+              variant="standard"
+              name="phone_no"
+              label="Phone No."
+              value={values.phone_no}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.phone_no && Boolean(errors.phone_no)}
+              helperText={touched.phone_no && errors.phone_no}
+            />
+          </Grid>
+          <Grid sm={12} item>
+            <MDTypography variant="body2" fontWeight="bold" py={2}>
+              Tax Details
+            </MDTypography>
+          </Grid>
+          <Grid sm={5} item>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              variant="standard"
+              name="pan_no"
+              label="PAN No."
+              value={values.pan_no}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.pan_no && Boolean(errors.pan_no)}
+              helperText={touched.pan_no && errors.pan_no}
+            />
+          </Grid>
+          <Grid sm={5} item>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              variant="standard"
+              name="gst_in"
+              label="GSTIN"
+              value={values.gst_in}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.gst_in && Boolean(errors.gst_in)}
+              helperText={touched.gst_in && errors.gst_in}
+            />
+          </Grid>
+          <Grid sm={12} item>
+            <MDTypography variant="body2" fontWeight="bold" py={2}>
+              Bank Details
+            </MDTypography>
+          </Grid>
+          <Grid sm={5} item>
+            <Autocomplete
+              sx={{ width: "70%" }}
+              onChange={(event, value) => {
+                handleChange({
+                  target: { name: "bank_name", value },
+                });
+              }}
+              options={bank_names}
+              renderInput={(params: any) => (
+                <FormField
+                  label="Bank Name"
+                  InputLabelProps={{ shrink: true }}
+                  name="bank_name"
+                  onChange={handleChange}
+                  value={values.bank_name}
+                  {...params}
+                  variant="outlined"
+                />
+              )}
+            />
+          </Grid>
+          <Grid sm={5} item>
+            <MDInput
+              sx={{ width: "70%" }}
+              variant="standard"
+              name="ac_no"
+              label="Bank A/c No"
+              value={values.ac_no}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.ac_no && Boolean(errors.ac_no)}
+              helperText={touched.ac_no && errors.ac_no}
+            />
+          </Grid>
+          <Grid sm={5} item>
+            <MDInput
+              sx={{ width: "70%" }}
+              variant="standard"
+              name="ifsc_code"
+              label="IFSC Code"
+              value={values.ifsc_code}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.ifsc_code && Boolean(errors.ifsc_code)}
+              helperText={touched.ifsc_code && errors.ifsc_code}
+            />
+          </Grid>
+          <Grid sm={12} item>
+            <MDTypography variant="body2" fontWeight="bold" py={2}>
+              Account Details
+            </MDTypography>
+          </Grid>
+          <Grid sm={5} item>
+            <MDInput
+              sx={{ width: "70%" }}
+              type="number"
+              autoComplete="off"
+              variant="standard"
+              name="opening_balance"
+              label="Opening Balance"
+              value={values.opening_balance}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.opening_balance && Boolean(errors.opening_balance)}
+              helperText={touched.opening_balance && errors.opening_balance}
+            />
+          </Grid>
+          <Grid sm={7} item>
+            <MDTypography variant="body2">Account Type : </MDTypography>
+            <FormControl>
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                row
+                name="radio-buttons-group"
+              >
+                <FormControlLabel
+                  control={
+                    <Radio
+                      checked={values.ac_type.includes("Debit")}
                       onChange={handleChange}
-                      value={values.bank_name}
-                      {...params}
-                      variant="outlined"
+                      name="ac_type"
+                      value="Debit"
                     />
-                  )}
+                  }
+                  label={<MDTypography variant="body2">Debit</MDTypography>}
                 />
-              </Grid>
-              <Grid sm={12} item>
-                <MDInput
-                  variant="standard"
-                  name="ac_no"
-                  label="Bank A/c No"
-                  value={values.ac_no}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.ac_no && Boolean(errors.ac_no)}
-                  helperText={touched.ac_no && errors.ac_no}
-                />
-              </Grid>
-              <Grid sm={12} item>
-                <MDInput
-                  variant="standard"
-                  name="ifsc_code"
-                  label="IFSC Code"
-                  value={values.ifsc_code}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.ifsc_code && Boolean(errors.ifsc_code)}
-                  helperText={touched.ifsc_code && errors.ifsc_code}
-                />
-              </Grid>
-              <Grid sm={12} item>
-                <MDTypography variant="h5">Account Details</MDTypography>
-              </Grid>
-
-              <Grid sm={12} item>
-                <MDTypography variant="body2">Account Type : </MDTypography>
-                <FormControl>
-                  <RadioGroup
-                    aria-labelledby="demo-radio-buttons-group-label"
-                    row
-                    name="radio-buttons-group"
-                  >
-                    <FormControlLabel
-                      control={
-                        <Radio
-                          checked={values.ac_type.includes("Debit")}
-                          onChange={handleChange}
-                          name="ac_type"
-                          value="Debit"
-                        />
-                      }
-                      label={<MDTypography variant="body2">Debit</MDTypography>}
+                <FormControlLabel
+                  // value="male"
+                  control={
+                    <Radio
+                      checked={values.ac_type.includes("Credit")}
+                      onChange={handleChange}
+                      name="ac_type"
+                      value="Credit"
                     />
-                    <FormControlLabel
-                      // value="male"
-                      control={
-                        <Radio
-                          checked={values.ac_type.includes("Credit")}
-                          onChange={handleChange}
-                          name="ac_type"
-                          value="Credit"
-                        />
-                      }
-                      label={<MDTypography variant="body2"> Credit</MDTypography>}
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-              <Grid sm={12} item>
-                <MDInput
-                  type="number"
-                  autoComplete="off"
-                  variant="standard"
-                  name="opening_balance"
-                  label="Opening Balance"
-                  value={values.opening_balance}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.opening_balance && Boolean(errors.opening_balance)}
-                  helperText={touched.opening_balance && errors.opening_balance}
+                  }
+                  label={<MDTypography variant="body2"> Credit</MDTypography>}
                 />
-              </Grid>
-              <Grid sm={12} item>
-                <MDTypography variant="h5">Contact Details</MDTypography>
-              </Grid>
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+          <Grid sm={12} item>
+            <MDTypography variant="body2" fontWeight="bold">
+              Contact Details
+            </MDTypography>
+          </Grid>
 
-              <Grid sm={12} item>
-                <MDInput
-                  variant="standard"
-                  name="contact_person"
-                  label="Contact Person"
-                  value={values.contact_person}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.contact_person && Boolean(errors.contact_person)}
-                  helperText={touched.contact_person && errors.contact_person}
-                />
-              </Grid>
-              <Grid sm={12} item>
-                <MDInput
-                  required
-                  variant="standard"
-                  name="contact_no"
-                  label="Contact No"
-                  value={values.contact_no}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.contact_no && Boolean(errors.contact_no)}
-                  helperText={touched.contact_no && errors.contact_no}
-                />
-              </Grid>
-              <Grid sm={12} item>
-                <MDTypography variant="h5">Other Details</MDTypography>
-              </Grid>
-
-              <Grid sm={12} item mb={2}>
-                <MDInput
-                  variant="standard"
-                  name="remarks"
-                  label="Remark / Note"
-                  value={values.remarks}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.remarks && Boolean(errors.remarks)}
-                  helperText={touched.remarks && errors.remarks}
-                />
-              </Grid>
-              <MDButton type="submit" color="info" pt={2}>
+          <Grid sm={5} item>
+            <MDInput
+              sx={{ width: "70%" }}
+              variant="standard"
+              name="contact_person"
+              label="Contact Person"
+              value={values.contact_person}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.contact_person && Boolean(errors.contact_person)}
+              helperText={touched.contact_person && errors.contact_person}
+            />
+          </Grid>
+          <Grid sm={5} item>
+            <MDInput
+              sx={{ width: "70%" }}
+              required
+              variant="standard"
+              name="contact_no"
+              label="Contact No"
+              value={values.contact_no}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.contact_no && Boolean(errors.contact_no)}
+              helperText={touched.contact_no && errors.contact_no}
+            />
+          </Grid>
+          <Grid item sm={12}>
+            <MDTypography variant="body2" fontWeight="bold" py={2}>
+              Other Details
+            </MDTypography>
+          </Grid>
+          <Grid item sm={5}>
+            <MDInput
+              sx={{ minWidth: "70%" }}
+              multiline
+              rows={3}
+              variant="standard"
+              name="remarks"
+              label="Remark / Note"
+              value={values.remarks}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.remarks && Boolean(errors.remarks)}
+              helperText={touched.remarks && errors.remarks}
+            />
+          </Grid>
+          <Grid
+            item
+            sm={5}
+            container
+            sx={{ display: "flex", justifyContent: "justify-start" }}
+            spacing={2}
+            pt={6}
+          >
+            <Grid item>
+              <MDButton color="info" variant="contained" type="submit">
                 Submit
               </MDButton>
-            </MDBox>
+            </Grid>
+            <Grid item>
+              <MDButton color="primary" variant="outlined" onClick={() => handleClose()}>
+                Cancel
+              </MDButton>
+            </Grid>
           </Grid>
         </Grid>
-      </Card>
+      </MDBox>
     </form>
   );
 };
 
-export default Update;
+export default Create;

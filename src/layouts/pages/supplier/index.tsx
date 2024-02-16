@@ -116,7 +116,7 @@ const View = () => {
           + Add New Supplier
         </MDButton>
 
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleClose} maxWidth="sm">
           <Create setOpen={setOpen} editData={editData} method={method} />
         </Dialog>
       </Grid>

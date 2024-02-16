@@ -6,50 +6,77 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import Grid from "@mui/material/Grid";
+
 import { useFormik } from "formik";
-import Autocomplete from "@mui/material/Autocomplete";
+
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
-import { TreeSelect, message } from "antd";
+
+import { message } from "antd";
+import axios from "axios";
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
-
-import FormField from "layouts/ecommerce/products/new-product/components/FormField";
-import { useState, useEffect } from "react";
-
-import axios from "axios";
-
-const Create = (props: any) => {
-  const { setOpen } = props;
+let initialValues: {
+  brand_name: "";
+};
+const Update = (props: any) => {
+  const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
   };
+  if (method === "PUT") {
+    initialValues = {
+      brand_name: editData.brand_name,
+    };
+  } else {
+    initialValues = { brand_name: "" };
+  }
 
   const { values, touched, errors, handleChange, handleBlur, handleSubmit } = useFormik({
-    initialValues: {
-      brand_name: "",
-    },
-    // validationSchema: validationSchema,
+    initialValues,
     onSubmit: (values, action) => {
-      const sendData = values;
-      axios
-        .post("http://10.0.20.121:8000/brands", sendData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          if (response.status === 200) {
-            message.success("Created Successfully");
-          }
-        })
-        .catch((error) => {
-          message.error(error.response.data?.detail || "error occured");
-        });
-
-      action.resetForm();
+      const handleCreateSubmit = async () => {
+        const sendData = values;
+        axios
+          .post("http://10.0.20.121:8000/brands", sendData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              message.success("Created Successfully");
+            }
+          })
+          .catch((error) => {
+            message.error(error.response.data?.detail || "error occured");
+          });
+      };
+      const handleUpdateSubmit = async () => {
+        const sendData = { ...values, old_brand_name: editData.brand_name };
+        axios
+          .put("http://10.0.20.121:8000/brands", sendData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              message.success("Updated Successfully");
+            }
+          })
+          .catch((error) => {
+            message.error(error.response.data?.detail || "error occured");
+          });
+      };
+      if (method === "PUT") {
+        handleUpdateSubmit();
+      } else {
+        handleCreateSubmit();
+      }
     },
   });
   return (
@@ -74,7 +101,7 @@ const Create = (props: any) => {
             />
           </Grid>
 
-          <Grid item sm={12}>
+          <Grid item xs={12}>
             <Grid container justifyContent="center">
               <Grid item>
                 <MDButton
@@ -107,4 +134,4 @@ const Create = (props: any) => {
   );
 };
 
-export default Create;
+export default Update;

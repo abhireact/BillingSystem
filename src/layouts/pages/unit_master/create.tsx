@@ -6,60 +6,79 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import Grid from "@mui/material/Grid";
+
 import { useFormik } from "formik";
-import Autocomplete from "@mui/material/Autocomplete";
+
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
-import { TreeSelect, message } from "antd";
+
+import { message } from "antd";
+import axios from "axios";
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
-
-import FormField from "layouts/ecommerce/products/new-product/components/FormField";
-import { useState, useEffect } from "react";
-
-import axios from "axios";
-import * as yup from "yup";
-
-const validationSchema = yup.object({
-  unit_name: yup
-    .string()
-    .required("Unit Name should be in correct format")
-    .min(3, "Unit name must be at least 3 characters")
-    .max(3, "Unit name must be exactly 3 characters"),
-});
-
-const Create = (props: any) => {
-  const { setOpen } = props;
+let initialValues: {
+  unit_name: "";
+};
+const Update = (props: any) => {
+  const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
   };
+  if (method === "PUT") {
+    initialValues = {
+      unit_name: editData.unit_name,
+    };
+  } else {
+    initialValues = { unit_name: "" };
+  }
 
   const { values, touched, errors, handleChange, handleBlur, handleSubmit } = useFormik({
-    initialValues: {
-      unit_name: "",
-    },
-    validationSchema: validationSchema,
+    initialValues,
     onSubmit: (values, action) => {
-      const sendData = values;
-      axios
-        .post("http://10.0.20.121:8000/unitmaster", sendData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          if (response.status === 200) {
-            message.success("Created Successfully");
-            action.resetForm();
-          }
-        })
-        .catch((error) => {
-          message.error(error.response.data?.detail || "error occured");
-        });
-
-      action.resetForm();
+      const handleCreateSubmit = async () => {
+        const sendData = values;
+        axios
+          .post("http://10.0.20.121:8000/unitmaster", sendData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              message.success("Created Successfully");
+              action.resetForm();
+            }
+          })
+          .catch((error) => {
+            message.error(error.response.data?.detail || "error occured");
+          });
+      };
+      const handleUpdateSubmit = async () => {
+        const sendData = { ...values, old_unit_name: editData.unit_name };
+        axios
+          .put("http://10.0.20.121:8000/unitmaster", sendData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            if (response.status === 200) {
+              message.success("Created Successfully");
+              action.resetForm();
+            }
+          })
+          .catch((error) => {
+            message.error(error.response.data?.detail || "error occured");
+          });
+      };
+      if (method === "PUT") {
+        handleUpdateSubmit();
+      } else {
+        handleCreateSubmit();
+      }
     },
   });
   return (
@@ -84,7 +103,7 @@ const Create = (props: any) => {
             />
           </Grid>
 
-          <Grid item sm={12}>
+          <Grid item xs={12}>
             <Grid container justifyContent="center">
               <Grid item>
                 <MDButton
@@ -117,4 +136,4 @@ const Create = (props: any) => {
   );
 };
 
-export default Create;
+export default Update;

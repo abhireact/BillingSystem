@@ -34,6 +34,9 @@ let initialValues = {
   paid_by: "",
   remarks: "",
 };
+const validationSchema = yup.object().shape({
+  date: yup.date().max(new Date(), "only today date").required("required"),
+});
 
 const Create = (props: any) => {
   const { setOpen, editData, method } = props;
@@ -63,9 +66,12 @@ const Create = (props: any) => {
       remarks: "",
     };
   }
+  // Conditionally set the validation schema
+  const validationSchemaConditional = method === "POST" ? validationSchema : yup.object();
+
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues,
-    // validationSchema: validationSchema,
+    validationSchema: validationSchemaConditional,
     enableReinitialize: true,
     onSubmit: async (values, action) => {
       const handleCreateSubmit = async () => {

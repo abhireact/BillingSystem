@@ -106,8 +106,9 @@ const View = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <MDTypography>Manage Expenses</MDTypography>
-      <Grid sx={{ display: "flex", justifyContent: "flex-end" }}>
+
+      <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
+        <MDTypography>Manage Expenses</MDTypography>
         <MDButton variant="contained" color="info" onClick={handleOpenCreate}>
           + Add
         </MDButton>

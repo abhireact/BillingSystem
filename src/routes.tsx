@@ -83,7 +83,7 @@ import GroupMaster from "layouts/pages/group_master";
 import BrandMaster from "layouts/pages/brand_master";
 import AddService from "layouts/pages/addservices";
 import AddProduct from "layouts/pages/addproduct";
-import UnitMaster from "layouts/pages/units";
+import UnitMaster from "layouts/pages/unit_master";
 import ExpenseMaster from "layouts/pages/expense_master";
 import AddExpense from "layouts/pages/addexpense";
 import GeneralConfig from "layouts/pages/printing/generalconfig";
@@ -93,6 +93,8 @@ import DocumentTerm from "layouts/pages/printing/documentterms";
 import LLStocks from "layouts/pages/low_level_stocks";
 import StockAvailability from "layouts/pages/stock_availability";
 import Supplier from "layouts/pages/supplier";
+import Test from "layouts/pages/test";
+import Accounts from "layouts/pages/billing_account";
 const routes = [
   {
     type: "collapse",
@@ -149,27 +151,21 @@ const routes = [
     icon: <Icon fontSize="medium">image</Icon>,
     collapse: [
       {
-        name: "Profile",
-        key: "profile",
-        collapse: [
-          {
-            name: "Profile Overview",
-            key: "profile-overview",
-            route: "/pages/profile/profile-overview",
-            component: <ProfileOverview />,
-          },
-          {
-            name: "All Projects",
-            key: "all-projects",
-            route: "/pages/profile/all-projects",
-            component: <AllProjects />,
-          },
-        ],
-      },
-      {
         name: "INTERNSHIP",
         key: "intern",
         collapse: [
+          {
+            name: "Test Code",
+            key: "test",
+            route: "/pages/intern/test",
+            component: <Test />,
+          },
+          {
+            name: "Account",
+            key: "accounts",
+            route: "/pages/intern/accounts",
+            component: <Accounts />,
+          },
           {
             name: "Supplier Information",
             key: "suppliers",
@@ -286,69 +282,6 @@ const routes = [
           },
           { name: "Login Page", key: "Login", route: "/pages/intern/login", component: <Login /> },
         ],
-      },
-      {
-        name: "Users",
-        key: "users",
-        collapse: [
-          {
-            name: "New User",
-            key: "new-user",
-            route: "/pages/users/new-user",
-            component: <NewUser />,
-          },
-        ],
-      },
-      {
-        name: "Account",
-        key: "account",
-        collapse: [
-          {
-            name: "Settings",
-            key: "settings",
-            route: "/pages/account/settings",
-            component: <Settings />,
-          },
-          {
-            name: "Billing",
-            key: "billing",
-            route: "/pages/account/billing",
-            component: <Billing />,
-          },
-          {
-            name: "Invoice",
-            key: "invoice",
-            route: "/pages/account/invoice",
-            component: <Invoice />,
-          },
-        ],
-      },
-      {
-        name: "Projects",
-        key: "projects",
-        collapse: [
-          {
-            name: "Timeline",
-            key: "timeline",
-            route: "/pages/projects/timeline",
-            component: <Timeline />,
-          },
-        ],
-      },
-      {
-        name: "Pricing Page",
-        key: "pricing-page",
-        route: "/pages/pricing-page",
-        component: <PricingPage />,
-      },
-      { name: "RTL", key: "rtl", route: "/pages/rtl", component: <RTL /> },
-      { name: "Widgets", key: "widgets", route: "/pages/widgets", component: <Widgets /> },
-      { name: "Charts", key: "charts", route: "/pages/charts", component: <Charts /> },
-      {
-        name: "Notfications",
-        key: "notifications",
-        route: "/pages/notifications",
-        component: <Notifications />,
       },
     ],
   },
