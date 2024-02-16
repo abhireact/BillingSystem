@@ -176,7 +176,7 @@ const Create = () => {
               </Grid>
             </Grid>
           </MDBox>
-          <DataTable table={dataTableData} />
+          <DataTable table={dataTableData} entriesPerPage={false} />
         </Card>
         <MDBox p={4}></MDBox>
       </form>

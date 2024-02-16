@@ -23,7 +23,6 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { message } from "antd";
 import Checkbox from "@mui/material/Checkbox";
 
-const paymode = ["Cash", "UPI", "Bank Transfer"];
 let initialValues = {
   to_date: "",
   from_date: "",

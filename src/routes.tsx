@@ -94,7 +94,8 @@ import LLStocks from "layouts/pages/low_level_stocks";
 import StockAvailability from "layouts/pages/stock_availability";
 import Supplier from "layouts/pages/supplier";
 import Test from "layouts/pages/test";
-import Accounts from "layouts/pages/billing_account";
+import Cashbook from "layouts/pages/billing_account/cashbook";
+import ItemRegister from "layouts/pages/billing_account/item_register";
 const routes = [
   {
     type: "collapse",
@@ -161,10 +162,16 @@ const routes = [
             component: <Test />,
           },
           {
-            name: "Account",
-            key: "accounts",
-            route: "/pages/intern/accounts",
-            component: <Accounts />,
+            name: "Item Register",
+            key: "itemregister",
+            route: "/pages/intern/itemregister",
+            component: <ItemRegister />,
+          },
+          {
+            name: "Cashbook",
+            key: "cashbook",
+            route: "/pages/intern/cashbook",
+            component: <Cashbook />,
           },
           {
             name: "Supplier Information",
