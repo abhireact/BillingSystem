@@ -15,7 +15,7 @@ import Create from "./create";
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
 
-const Expense = () => {
+const View = () => {
   const [data, setData] = useState([]);
   const [method, setMethod] = useState("Post");
 
@@ -61,7 +61,7 @@ const Expense = () => {
   };
   useEffect(() => {
     axios
-      .get("http://10.0.20.121:8000/expenses", {
+      .get("http://10.0.20.121:8000/stockadjust", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -78,21 +78,22 @@ const Expense = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "Expense Type", accessor: "expense_type" },
-      { Header: "Date", accessor: "date" },
-      { Header: "Paid To", accessor: "paid_to" },
-      { Header: "Paid By", accessor: "paid_by" },
-      { Header: "Payment ref.no.", accessor: "payment_ref_no" },
+      { Header: "Adjust Type", accessor: "adjustment_type" },
+      { Header: "Item Name", accessor: "item_name" },
+      { Header: "Reason", accessor: "adjustment_reason" },
+      { Header: "Quantity", accessor: "quantity" },
+      { Header: "Amount", accessor: "amount" },
       { Header: "Remarks", accessor: "remarks" },
+
       { Header: "Action", accessor: "action" },
     ],
 
     rows: data.map((row, index) => ({
-      expense_type: <MDTypography variant="p">{row.expense_type}</MDTypography>,
-      date: <MDTypography variant="p">{row.date}</MDTypography>,
-      paid_to: <MDTypography variant="p">{row.paid_to}</MDTypography>,
-      paid_by: <MDTypography variant="p">{row.paid_by}</MDTypography>,
-      payment_ref_no: <MDTypography variant="p">{row.payment_ref_no}</MDTypography>,
+      adjustment_type: <MDTypography variant="p">{row.adjustment_type}</MDTypography>,
+      adjustment_reason: <MDTypography variant="p">{row.adjustment_reason}</MDTypography>,
+      item_name: <MDTypography variant="p">{row.item_name}</MDTypography>,
+      quantity: <MDTypography variant="p">{row.quantity}</MDTypography>,
+      amount: <MDTypography variant="p">{row.amount}</MDTypography>,
       remarks: <MDTypography variant="p">{row.remarks}</MDTypography>,
 
       action: (
@@ -117,7 +118,7 @@ const Expense = () => {
       <DashboardNavbar />
 
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <MDTypography>Manage Expenses</MDTypography>
+        <MDTypography>Manage Stock Adjustments</MDTypography>
         <MDButton variant="contained" color="info" onClick={handleOpenCreate}>
           + Add
         </MDButton>
@@ -131,4 +132,4 @@ const Expense = () => {
   );
 };
 
-export default Expense;
+export default View;

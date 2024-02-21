@@ -25,7 +25,7 @@ let initialValues: {
   igst: "";
   hsn_or_sac: "";
 };
-const Update = (props: any) => {
+const Create = (props: any) => {
   const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
@@ -50,53 +50,63 @@ const Update = (props: any) => {
     };
   }
 
-  const { values, touched, errors, handleChange, handleBlur, handleSubmit } = useFormik({
-    initialValues,
-    onSubmit: (values, action) => {
-      const handleCreateSubmit = async () => {
-        const sendData = values;
-        await axios
-          .post("http://10.0.20.121:8000/add_group", sendData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              message.success("Created Successfully");
-              action.resetForm();
-            }
-          })
-          .catch((error) => {
-            message.error(error.response.data?.detail || "error occured");
-          });
-      };
-      const handleUpdateSubmit = async () => {
-        const sendData = { ...values, old_group_name: editData.group_name };
-        axios
-          .put("http://10.0.20.121:8000/add_group", sendData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              message.success("Updated Successfully");
-            }
-          })
-          .catch((error) => {
-            message.error(error.response.data?.detail || "error occured");
-          });
-      };
-      if (method === "PUT") {
-        handleUpdateSubmit();
-      } else {
-        handleCreateSubmit();
-      }
-    },
-  });
+  const { values, touched, errors, handleChange, handleBlur, handleSubmit, setFieldValue } =
+    useFormik({
+      initialValues,
+      onSubmit: (values, action) => {
+        const handleCreateSubmit = async () => {
+          const sendData = values;
+          await axios
+            .post("http://10.0.20.121:8000/add_group", sendData, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .then((response) => {
+              if (response.status === 200) {
+                message.success("Created Successfully");
+                action.resetForm();
+              }
+            })
+            .catch((error) => {
+              message.error(error.response.data?.detail || "error occured");
+            });
+        };
+        const handleUpdateSubmit = async () => {
+          const sendData = { ...values, old_group_name: editData.group_name };
+          axios
+            .put("http://10.0.20.121:8000/add_group", sendData, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            .then((response) => {
+              if (response.status === 200) {
+                message.success("Updated Successfully");
+              }
+            })
+            .catch((error) => {
+              message.error(error.response.data?.detail || "error occured");
+            });
+        };
+        if (method === "PUT") {
+          handleUpdateSubmit();
+        } else {
+          handleCreateSubmit();
+        }
+      },
+    });
+  const handleSelectChange = (e: any) => {
+    const gst = e.target.value;
+
+    setFieldValue("cgst", gst);
+    setFieldValue("sgst", gst);
+    setFieldValue("igst", gst * 2);
+
+    console.log("GST", gst);
+  };
   return (
     <form onSubmit={handleSubmit}>
       <MDBox p={4}>
@@ -150,7 +160,7 @@ const Update = (props: any) => {
               label="CGST in %"
               type="number"
               value={values.cgst}
-              onChange={handleChange}
+              onChange={handleSelectChange}
               onBlur={handleBlur}
               error={touched.cgst && Boolean(errors.cgst)}
               helperText={touched.cgst && errors.cgst}
@@ -176,7 +186,7 @@ const Update = (props: any) => {
               label="SGST in %"
               type="number"
               value={values.sgst}
-              onChange={handleChange}
+              // onChange={handleChange}
               onBlur={handleBlur}
               error={touched.sgst && Boolean(errors.sgst)}
               helperText={touched.sgst && errors.sgst}
@@ -189,7 +199,7 @@ const Update = (props: any) => {
               label="IGST in %"
               type="number"
               value={values.igst}
-              onChange={handleChange}
+              //  onChange={handleChange}
               onBlur={handleBlur}
               error={touched.igst && Boolean(errors.igst)}
               helperText={touched.igst && errors.igst}
@@ -230,4 +240,4 @@ const Update = (props: any) => {
   );
 };
 
-export default Update;
+export default Create;

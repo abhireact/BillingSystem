@@ -112,6 +112,7 @@ const View = () => {
       ),
     })),
   };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />

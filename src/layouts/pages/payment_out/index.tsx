@@ -1,3 +1,67 @@
+// import DataTable from "examples/Tables/DataTable";
+// import MDTypography from "components/MDTypography";
+// import Dialog from "@mui/material/Dialog";
+// import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+// import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+// import MDButton from "components/MDButton";
+// import Grid from "@mui/material/Grid";
+// import IconButton from "@mui/material/IconButton";
+// import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
+// import DeleteIcon from "@mui/icons-material/Delete";
+// import { useState, useEffect } from "react";
+// import axios from "axios";
+
+// import Cookies from "js-cookie";
+// const token = Cookies.get("token");
+
+// const paymentOut = () => {
+//   const [data, setData] = useState([]);
+
+//   useEffect(() => {
+//     axios
+//       .get("http://10.0.20.121:8000/paymentout", {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Authorization: `Bearer ${token}`,
+//         },
+//       })
+//       .then((response) => {
+//         setData(response.data);
+
+//         console.log(response.data);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching data:", error);
+//       });
+//   }, []);
+//   const dataTableData = {
+//     columns: [
+//       { Header: "Supplier Name", accessor: "supplier_name" },
+//       { Header: "Date", accessor: "date" },
+//       { Header: "Transaction ID", accessor: "transaction_id" },
+//       { Header: "Amount", accessor: "amount" },
+//       { Header: "Remarks", accessor: "remarks" },
+//     ],
+
+//     rows: data.map((row, index) => ({
+//       date: <MDTypography variant="p">{row.date}</MDTypography>,
+//       supplier_name: <MDTypography variant="p">{row.supplier_name}</MDTypography>,
+//       transaction_id: <MDTypography variant="p">{row.transaction_id}</MDTypography>,
+//       amount: <MDTypography variant="p">{row.amount}</MDTypography>,
+//       remarks: <MDTypography variant="p">{row.remarks}</MDTypography>,
+//     })),
+//   };
+//   return (
+//     <DashboardLayout>
+//       <DashboardNavbar />
+//       <MDTypography>Payment Out</MDTypography>
+//       <Grid sx={{ display: "flex", justifyContent: "flex-end" }}></Grid>
+//       <DataTable table={dataTableData} />
+//     </DashboardLayout>
+//   );
+// };
+
+// export default paymentOut;
 import DataTable from "examples/Tables/DataTable";
 import MDTypography from "components/MDTypography";
 import Dialog from "@mui/material/Dialog";
@@ -15,7 +79,7 @@ import Create from "./create";
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
 
-const Expense = () => {
+const paymentOut = () => {
   const [data, setData] = useState([]);
   const [method, setMethod] = useState("Post");
 
@@ -61,7 +125,7 @@ const Expense = () => {
   };
   useEffect(() => {
     axios
-      .get("http://10.0.20.121:8000/expenses", {
+      .get("http://10.0.20.121:8000/paymentout", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -78,38 +142,19 @@ const Expense = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "Expense Type", accessor: "expense_type" },
+      { Header: "Supplier Name", accessor: "supplier_name" },
       { Header: "Date", accessor: "date" },
-      { Header: "Paid To", accessor: "paid_to" },
-      { Header: "Paid By", accessor: "paid_by" },
-      { Header: "Payment ref.no.", accessor: "payment_ref_no" },
+      { Header: "Transaction ID", accessor: "transaction_id" },
+      { Header: "Amount", accessor: "amount" },
       { Header: "Remarks", accessor: "remarks" },
-      { Header: "Action", accessor: "action" },
     ],
 
     rows: data.map((row, index) => ({
-      expense_type: <MDTypography variant="p">{row.expense_type}</MDTypography>,
       date: <MDTypography variant="p">{row.date}</MDTypography>,
-      paid_to: <MDTypography variant="p">{row.paid_to}</MDTypography>,
-      paid_by: <MDTypography variant="p">{row.paid_by}</MDTypography>,
-      payment_ref_no: <MDTypography variant="p">{row.payment_ref_no}</MDTypography>,
+      supplier_name: <MDTypography variant="p">{row.supplier_name}</MDTypography>,
+      transaction_id: <MDTypography variant="p">{row.transaction_id}</MDTypography>,
+      amount: <MDTypography variant="p">{row.amount}</MDTypography>,
       remarks: <MDTypography variant="p">{row.remarks}</MDTypography>,
-
-      action: (
-        <MDTypography variant="p">
-          <IconButton
-            onClick={() => {
-              handleOpenUpdate(index);
-              console.log(index);
-            }}
-          >
-            <CreateRoundedIcon />
-          </IconButton>
-          <IconButton onClick={() => handleDeleteData(row)}>
-            <DeleteIcon />
-          </IconButton>
-        </MDTypography>
-      ),
     })),
   };
   return (
@@ -117,7 +162,7 @@ const Expense = () => {
       <DashboardNavbar />
 
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <MDTypography>Manage Expenses</MDTypography>
+        <MDTypography>Payment Out </MDTypography>
         <MDButton variant="contained" color="info" onClick={handleOpenCreate}>
           + Add
         </MDButton>
@@ -131,4 +176,4 @@ const Expense = () => {
   );
 };
 
-export default Expense;
+export default paymentOut;

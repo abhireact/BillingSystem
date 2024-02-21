@@ -96,6 +96,8 @@ import Supplier from "layouts/pages/supplier";
 import Test from "layouts/pages/test";
 import Cashbook from "layouts/pages/billing_account/cashbook";
 import ItemRegister from "layouts/pages/billing_account/item_register";
+import StockAdjust from "layouts/pages/purchase/stock_adjustment";
+import PaymentOut from "layouts/pages/payment_out";
 const routes = [
   {
     type: "collapse",
@@ -160,6 +162,18 @@ const routes = [
             key: "test",
             route: "/pages/intern/test",
             component: <Test />,
+          },
+          {
+            name: "Payment Out",
+            key: "paymentout",
+            route: "/pages/intern/paymentout",
+            component: <PaymentOut />,
+          },
+          {
+            name: "Stock Adjustment",
+            key: "stockadjust",
+            route: "/pages/intern/stockadjust",
+            component: <StockAdjust />,
           },
           {
             name: "Item Register",

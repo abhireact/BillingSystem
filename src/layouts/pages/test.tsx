@@ -1,7 +1,6 @@
 import MDInput from "components/MDInput";
-import DataTable from "examples/Tables/DataTable";
 import { useFormik } from "formik";
-import * as yup from "yup";
+import { useState } from "react";
 import axios from "axios";
 import Card from "@mui/material/Card";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -13,63 +12,26 @@ import Grid from "@mui/material/Grid";
 import FormField from "layouts/ecommerce/products/new-product/components/FormField";
 import Autocomplete from "@mui/material/Autocomplete";
 import MDTypography from "components/MDTypography";
-import MDDropzone from "components/MDDropzone";
-import Radio from "@mui/material/Radio";
-import FormControl from "@mui/material/FormControl";
-import {
-  FormControlLabel,
-  FormLabel,
-  InputLabel,
-  MenuItem,
-  RadioGroup,
-  Select,
-} from "@mui/material";
-import { useState, useEffect } from "react";
-import MDAvatar from "components/MDAvatar";
 const token = Cookies.get("token");
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { message } from "antd";
-import Checkbox from "@mui/material/Checkbox";
+import DataTable from "examples/Tables/DataTable";
 
+const paymode = ["Cash", "UPI", "Bank Transfer"];
 let initialValues = {
-  product_name: "",
-  to_date: "",
-  from_date: "",
+  amount: "",
+  payment_mode: "",
 };
 
 const Create = () => {
-  const [productsoption, setProductsoption] = useState([]);
-  const [data, setData] = useState([]);
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get("http://10.0.20.121:8000/products", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 200) {
-        console.log(response.data, "products data");
-        setProductsoption(response.data);
-      }
-    } catch (error) {
-      // console.error(error);
-      console.log("Data not found");
-    }
-  };
-  useEffect(() => {
-    fetchProducts();
-  }, []);
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues,
-
     enableReinitialize: true,
     onSubmit: async (values, action) => {
       const handleCreateSubmit = async () => {
         let sendData = values;
 
         await axios
-          .post("http://10.0.20.121:8000/inventory/itemregister", sendData, {
+          .post("http://10.0.20.121:8000/paymentout", sendData, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -77,9 +39,9 @@ const Create = () => {
           })
           .then((response) => {
             if (response.status === 200) {
-              console.log("data", response.data);
-              setData(response.data);
-              action.resetForm();
+              console.log("Created Successfully");
+
+              message.success("Created SuccessFully");
             }
           })
           .catch((error) => {
@@ -89,96 +51,87 @@ const Create = () => {
       };
 
       handleCreateSubmit();
-      action.resetForm();
     },
   });
+  const [data, setData] = useState([]);
   const dataTableData = {
     columns: [
-      { Header: "Particular", accessor: "particular" },
-
-      { Header: "Date", accessor: "date" },
-      { Header: "Credit", accessor: "credit" },
-      { Header: "Debit", accessor: "debit" },
+      { Header: "Payment Mode", accessor: "payment_mode" },
+      { Header: "Amount", accessor: "amount" },
     ],
 
     rows: data.map((row, index) => ({
-      particular: <MDTypography variant="p">{row.particular}</MDTypography>,
-      date: <MDTypography variant="p">{row.date}</MDTypography>,
-      credit: <MDTypography variant="p">{row.credit}</MDTypography>,
-      debit: <MDTypography variant="p">{row.debit}</MDTypography>,
+      payment_mode: <p>{row.payment_mode}</p>,
+      amount: <p>{row.template_amount}</p>,
     })),
   };
-
+  const handleAddField = () => {
+    setData([...data, values]);
+    console.log(data);
+  };
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <form onSubmit={handleSubmit}>
         <Card>
           <MDBox p={4}>
-            <Grid container>
+            <Grid container spacing={2}>
               <Grid item sm={12}>
-                <MDTypography variant="body1" fontWeight="bold" py={2}>
-                  Item Register
+                <MDTypography variant="body2" fontWeight="bold" py={2}>
+                  Add Purchase Order
                 </MDTypography>
               </Grid>
 
-              <Grid item sm={4}>
-                <FormControl sx={{ minWidth: "70%" }}>
-                  <InputLabel>Choose Product</InputLabel>
-                  <Select
-                    label="choose group"
-                    value={values.product_name}
-                    onChange={handleChange}
-                    autoWidth={true}
-                    name="product_name"
-                    variant="standard"
-                  >
-                    {productsoption.map((products, index) => (
-                      <MenuItem key={index} value={products.product_name}>
-                        {products.product_name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+              <Grid sm={6}>
+                <Autocomplete
+                  sx={{ width: "80%" }}
+                  value={values.payment_mode}
+                  onChange={(event, value) => {
+                    handleChange({
+                      target: { name: "payment_mode", value },
+                    });
+                  }}
+                  options={paymode}
+                  renderInput={(params: any) => (
+                    <FormField
+                      label="Pay Mode"
+                      InputLabelProps={{ shrink: true }}
+                      name="payment_mode"
+                      onChange={handleChange}
+                      value={values.payment_mode}
+                      {...params}
+                      variant="outlined"
+                    />
+                  )}
+                />
               </Grid>
 
-              <Grid item sm={3} sx={{ display: "flex", justifyContent: "center" }}>
+              <Grid sm={6} container>
                 <MDInput
                   variant="standard"
-                  type="date"
-                  name="from_date"
-                  value={values.from_date}
+                  type="number"
+                  name="amount"
+                  label="Amount"
+                  value={values.amount}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.from_date && Boolean(errors.from_date)}
-                  helperText={touched.from_date && errors.from_date}
+                  error={touched.amount && Boolean(errors.amount)}
+                  helperText={touched.amount && errors.amount}
                 />
-              </Grid>
-              <Grid item sm={1} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDTypography variant="body2"> to</MDTypography>
-              </Grid>
-              <Grid item sm={3} sx={{ display: "flex", justifyContent: "center" }}>
-                <MDInput
-                  variant="standard"
-                  type="date"
-                  name="to_date"
-                  value={values.to_date}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.to_date && Boolean(errors.to_date)}
-                  helperText={touched.to_date && errors.to_date}
-                />
-              </Grid>
-              <Grid item sm={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
-                <MDButton color="info" variant="contained" type="submit">
-                  Search
-                </MDButton>
               </Grid>
             </Grid>
+            <MDButton color="info">ADD +</MDButton>
           </MDBox>
-          <DataTable table={dataTableData} />
         </Card>
-        <MDBox p={4}></MDBox>
+        <DataTable
+          table={dataTableData}
+          isSorted={false}
+          entriesPerPage={false}
+          showTotalEntries={false}
+        />
+        <MDButton color="info" type="submit" onClick={handleAddField}>
+          Submit
+        </MDButton>
       </form>
     </DashboardLayout>
   );
