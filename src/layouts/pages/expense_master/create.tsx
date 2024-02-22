@@ -20,7 +20,7 @@ const token = Cookies.get("token");
 let initialValues: {
   expense_name: "";
 };
-const Update = (props: any) => {
+const Create = (props: any) => {
   const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
@@ -134,4 +134,4 @@ const Update = (props: any) => {
   );
 };
 
-export default Update;
+export default Create;

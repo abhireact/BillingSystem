@@ -6,17 +6,16 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import Grid from "@mui/material/Grid";
-
 import { useFormik } from "formik";
-
 import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import MDInput from "components/MDInput";
-
 import { message } from "antd";
 import axios from "axios";
 import Cookies from "js-cookie";
 const token = Cookies.get("token");
+
+import { useDispatch, useSelector } from "react-redux";
 let initialValues: {
   group_name: "";
   cgst: "";
@@ -27,6 +26,11 @@ let initialValues: {
 };
 const Create = (props: any) => {
   const { setOpen, editData, method } = props;
+  const dispatch = useDispatch();
+  const { groupNames, productNames, status, error } = useSelector(
+    (state: { dataReducer: any }) => state.dataReducer
+  );
+  console.log(groupNames, "redux group names");
   const handleClose = () => {
     setOpen(false);
   };

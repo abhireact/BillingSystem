@@ -24,9 +24,6 @@ import { message } from "antd";
 import Checkbox from "@mui/material/Checkbox";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { useDispatch, useSelector } from "react-redux";
-
-import { fetchGroupNames } from "../reducer/dataSlice";
 
 let initialValues = {
   group: "",
@@ -52,19 +49,12 @@ let initialValues = {
   low_level_limit: "",
   product_type: "",
   serial_no: "",
-
   one_click_sale: false,
   enable_tracking: false,
   print_serial_no: false,
   not_for_sale: false,
 };
 const Create = (props: any) => {
-  const dispatch = useDispatch();
-  const { groupNames, productNames, status, error } = useSelector(
-    (state: { dataReducer: any }) => state.dataReducer
-  );
-  console.log(groupNames, "redux group names");
-
   const { setOpen, editData, method } = props;
   const handleClose = () => {
     setOpen(false);
@@ -133,9 +123,6 @@ const Create = (props: any) => {
       not_for_sale: false,
     };
   }
-  useEffect(() => {
-    dispatch(fetchGroupNames());
-  }, [dispatch]);
 
   useEffect(() => {
     const fetchGroups = async () => {

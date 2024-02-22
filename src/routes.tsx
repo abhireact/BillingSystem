@@ -98,6 +98,7 @@ import Cashbook from "layouts/pages/billing_account/cashbook";
 import ItemRegister from "layouts/pages/billing_account/item_register";
 import StockAdjust from "layouts/pages/purchase/stock_adjustment";
 import PaymentOut from "layouts/pages/payment_out";
+import Reduxpage from "layouts/pages/homepage";
 const routes = [
   {
     type: "collapse",
@@ -126,26 +127,7 @@ const routes = [
     ],
   },
   { type: "divider", key: "divider-0" },
-  {
-    type: "collapse",
-    name: "Dashboards",
-    key: "dashboards",
-    icon: <Icon fontSize="medium">dashboard</Icon>,
-    collapse: [
-      {
-        name: "Analytics",
-        key: "analytics",
-        route: "/dashboards/analytics",
-        component: <Analytics />,
-      },
-      {
-        name: "Sales",
-        key: "sales",
-        route: "/dashboards/sales",
-        component: <Sales />,
-      },
-    ],
-  },
+
   { type: "title", title: "Pages", key: "title-pages" },
   {
     type: "collapse",
@@ -157,6 +139,12 @@ const routes = [
         name: "INTERNSHIP",
         key: "intern",
         collapse: [
+          {
+            name: "Redux Page",
+            key: "reduxpage",
+            route: "/pages/intern/reduxpage",
+            component: <Reduxpage />,
+          },
           {
             name: "Test Code",
             key: "test",
@@ -338,112 +326,7 @@ const routes = [
       },
     ],
   },
-  {
-    type: "collapse",
-    name: "Ecommerce",
-    key: "ecommerce",
-    icon: <Icon fontSize="medium">shopping_basket</Icon>,
-    collapse: [
-      {
-        name: "Products",
-        key: "products",
-        collapse: [
-          {
-            name: "New Product",
-            key: "new-product",
-            route: "/ecommerce/products/new-product",
-            component: <NewProduct />,
-          },
-          {
-            name: "Edit Product",
-            key: "edit-product",
-            route: "/ecommerce/products/edit-product",
-            component: <EditProduct />,
-          },
-          {
-            name: "Product Page",
-            key: "product-page",
-            route: "/ecommerce/products/product-page",
-            component: <ProductPage />,
-          },
-        ],
-      },
-      {
-        name: "Orders",
-        key: "orders",
-        collapse: [
-          {
-            name: "Order List",
-            key: "order-list",
-            route: "/ecommerce/orders/order-list",
-            component: <OrderList />,
-          },
-          {
-            name: "Order Details",
-            key: "order-details",
-            route: "/ecommerce/orders/order-details",
-            component: <OrderDetails />,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    type: "collapse",
-    name: "Authentication",
-    key: "authentication",
-    icon: <Icon fontSize="medium">content_paste</Icon>,
-    collapse: [
-      {
-        name: "Sign In",
-        key: "sign-in",
-        collapse: [
-          {
-            name: "Basic",
-            key: "basic",
-            route: "/authentication/sign-in/basic",
-            component: <SignInBasic />,
-          },
-          {
-            name: "Cover",
-            key: "cover",
-            route: "/authentication/sign-in/cover",
-            component: <SignInCover />,
-          },
-          {
-            name: "Illustration",
-            key: "illustration",
-            route: "/authentication/sign-in/illustration",
-            component: <SignInIllustration />,
-          },
-        ],
-      },
-      {
-        name: "Sign Up",
-        key: "sign-up",
-        collapse: [
-          {
-            name: "Cover",
-            key: "cover",
-            route: "/authentication/sign-up/cover",
-            component: <SignUpCover />,
-          },
-        ],
-      },
-      {
-        name: "Reset Password",
-        key: "reset-password",
-        collapse: [
-          {
-            name: "Cover",
-            key: "cover",
-            route: "/authentication/reset-password/cover",
-            component: <ResetCover />,
-          },
-        ],
-      },
-    ],
-  },
+
   { type: "divider", key: "divider-1" },
   { type: "title", title: "Docs", key: "title-docs" },
   {
@@ -603,14 +486,6 @@ const routes = [
         href: "https://www.creative-tim.com/learning-lab/react/typography/material-dashboard/",
       },
     ],
-  },
-  {
-    type: "collapse",
-    name: "Change Log",
-    key: "changelog",
-    href: "https://github.com/creativetimofficial/ct-material-dashboard-pro-react/blob/main/CHANGELOG.md",
-    icon: <Icon fontSize="medium">receipt_long</Icon>,
-    noCollapse: true,
   },
 ];
 
