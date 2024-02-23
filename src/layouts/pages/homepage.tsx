@@ -1,7 +1,7 @@
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
-import { fetchProducts, fetchUnitsName, fetchSuppliers } from "./reducer/dataSlice";
+import { fetchProducts, fetchUnitsName, fetchSuppliers, fetchCompany } from "./reducer/dataSlice";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 const homepage = () => {
@@ -10,6 +10,7 @@ const homepage = () => {
     dispatch(fetchProducts());
     dispatch(fetchUnitsName());
     dispatch(fetchSuppliers());
+    dispatch(fetchCompany());
   }, []);
   return (
     <div>

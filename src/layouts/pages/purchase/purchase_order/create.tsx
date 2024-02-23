@@ -87,7 +87,8 @@ const states = [
   "Ladakh",
   "Lakshadweep",
 ];
-const Create = () => {
+const Create = (props: any) => {
+  const { setOpen } = props;
   const [data, setData] = useState([]);
   const [statetax, setStatetax] = useState("");
 
