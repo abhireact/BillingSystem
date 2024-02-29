@@ -97,6 +97,9 @@ import Test from "layouts/pages/test";
 import Cashbook from "layouts/pages/billing_account/cashbook";
 import ItemRegister from "layouts/pages/billing_account/item_register";
 import StockAdjust from "layouts/pages/purchase/stock_adjustment";
+import PurchaseOrder from "layouts/pages/purchase/purchase_order";
+import PurchaseBill from "layouts/pages/purchase/purchase_bill";
+import InvoicePDF from "layouts/pages/purchase/invoice_pdf";
 import PaymentOut from "layouts/pages/payment_out";
 import Reduxpage from "layouts/pages/homepage";
 const routes = [
@@ -150,6 +153,24 @@ const routes = [
             key: "test",
             route: "/pages/intern/test",
             component: <Test />,
+          },
+          {
+            name: "Invoice PDF",
+            key: "invoicepdf",
+            route: "/pages/intern/invoicepdf",
+            component: <InvoicePDF />,
+          },
+          {
+            name: "Purchase Bill",
+            key: "purchasebill",
+            route: "/pages/intern/purchasebill",
+            component: <PurchaseBill />,
+          },
+          {
+            name: "Purchase Order",
+            key: "purchaseorder",
+            route: "/pages/intern/purchaseorder",
+            component: <PurchaseOrder />,
           },
           {
             name: "Payment Out",

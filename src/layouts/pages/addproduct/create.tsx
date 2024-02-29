@@ -230,6 +230,12 @@ const Create = (props: any) => {
 
     console.log("GST", gst);
   };
+  const handleStockprice = (e: any) => {
+    const number = e.target.value;
+    setFieldValue("opening_stock", number);
+    const amount = parseInt(number) * parseInt(values.purchase_price);
+    setFieldValue("opening_stock_price", amount);
+  };
   return (
     <form onSubmit={handleSubmit}>
       <MDBox pb={4} pt={2} mr={-20} pl={4}>
@@ -421,7 +427,7 @@ const Create = (props: any) => {
               name="opening_stock"
               label="Opening Stock"
               value={values.opening_stock}
-              onChange={handleChange}
+              onChange={handleStockprice}
               onBlur={handleBlur}
               error={touched.opening_stock && Boolean(errors.opening_stock)}
               helperText={touched.opening_stock && errors.opening_stock}
@@ -435,7 +441,7 @@ const Create = (props: any) => {
               name="opening_stock_price"
               label="opening stock price"
               value={values.opening_stock_price}
-              onChange={handleChange}
+              // onChange={handleChange}
               onBlur={handleBlur}
               error={touched.opening_stock_price && Boolean(errors.opening_stock_price)}
               helperText={touched.opening_stock_price && errors.opening_stock_price}

@@ -3,8 +3,6 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import axios from "axios";
 import Card from "@mui/material/Card";
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import MDBox from "components/MDBox";
 import Cookies from "js-cookie";
 import MDButton from "components/MDButton";
@@ -20,12 +18,24 @@ import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";
 import { useDispatch, useSelector } from "react-redux";
 import { FormControlLabel } from "@mui/material";
+import Particulars from "../particulars";
 
 let today = new Date().toISOString().split("T")[0];
 
 const gsttypes = ["GST", "Non-GST", "Bill of Supply"];
 
 let initialValues = {
+  purchase_type: "GST",
+  payment_terms: 0,
+  supplier_name: "",
+  place_of_supply: "",
+  bill_date: today,
+  due_date: today,
+  purchase_bill_no: "",
+  purchase_order_no: "",
+  purchase_order_date: today,
+  e_way_bill_no: "",
+
   item_name: "",
   quantity: "",
   unit: "",
@@ -34,15 +44,9 @@ let initialValues = {
   tax: "",
   cess: "",
   amount: "",
-  order_type: "GST",
-  date: today,
-  valid_till: today,
-  supplier_name: "",
-  contact_no: "",
-  place_supply: "",
+
   shipping_cost: 0,
   shipping_tax: 0,
-  delivery_terms: "",
   remarks: "",
   payment_mode: "Cash",
   transaction_id: "",
@@ -87,7 +91,8 @@ const states = [
   "Ladakh",
   "Lakshadweep",
 ];
-const Create = (props: any) => {
+const periods = [15, 30, 60, 90, 180];
+function Create(props: any) {
   const { setOpen } = props;
   const [data, setData] = useState([]);
   const [statetax, setStatetax] = useState("");
@@ -98,9 +103,14 @@ const Create = (props: any) => {
   console.log("products", productsInfo);
   console.log(suppliersInfo);
   const [checked, setChecked] = useState(false);
+  const [discountAll, setDiscountAll] = useState(false);
+  const [discountTax, setDiscountTax] = useState(0);
 
   const handleCheckbox = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
+  };
+  const handleCheckDiscount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDiscountAll(event.target.checked);
   };
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue } =
@@ -111,10 +121,10 @@ const Create = (props: any) => {
         const handleCreateSubmit = async () => {
           let taxes: { tax_name: string; percentage: number; amount: number }[] = [];
           let total = subTotal + values.shipping_cost;
-          if (values.order_type === "GST" && statetax === "InterState") {
+          if (values.purchase_type === "GST" && statetax === "InterState") {
             total = subTotal + igstTotal + values.shipping_cost;
             taxes = [{ tax_name: "IGST", percentage: igstTotaltax, amount: igstTotal }];
-          } else if (values.order_type === "GST" && statetax === "IntraState") {
+          } else if (values.purchase_type === "GST" && statetax === "IntraState") {
             total = subTotal + igstTotal + values.shipping_cost;
             taxes = [
               { tax_name: "SGST", percentage: igstTotaltax / 2, amount: igstTotal / 2 },
@@ -122,16 +132,20 @@ const Create = (props: any) => {
             ];
           }
           let sendData = {
-            order_type: values.order_type,
-            date: values.date,
-            valid_till: values.valid_till,
+            purchase_type: values.purchase_type,
+            bill_date: values.bill_date,
+            due_date: values.due_date,
+            purchase_bill_no: values.purchase_bill_no,
+            purchase_order_no: values.purchase_order_no,
+            purchase_order_date: values.purchase_order_date,
+            e_way_bill_no: values.e_way_bill_no,
+
             supplier_name: values.supplier_name,
-            contact_no: values.contact_no,
-            place_supply: values.place_supply,
+            payment_terms: values.payment_terms,
+            place_of_supply: values.place_of_supply,
             particulars: data,
             shipping_cost: values.shipping_cost,
             shipping_tax: values.shipping_tax,
-            delivery_terms: values.delivery_terms,
             remarks: values.remarks,
             payment_mode: values.payment_mode,
             transaction_id: values.transaction_id,
@@ -141,7 +155,7 @@ const Create = (props: any) => {
             taxes: taxes,
           };
           await axios
-            .post("http://10.0.20.121:8000/purchaseorder", sendData, {
+            .post("http://10.0.20.121:8000/purchase_bill", sendData, {
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
@@ -219,16 +233,6 @@ const Create = (props: any) => {
     console.log(data, "added values");
   };
 
-  const handleQuantityChange = (e: any) => {
-    setFieldValue("quantity", e.target.value);
-    const amount = e.target.value * parseInt(values.price);
-    setFieldValue("amount", amount);
-  };
-  const handlePriceChange = (e: any) => {
-    setFieldValue("price", e.target.value);
-    const amount = e.target.value * parseInt(values.quantity);
-    setFieldValue("amount", amount);
-  };
   const subTotal = data.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0);
   const igstTotaltax = data.reduce(
     (accumulator, currentValue) => accumulator + currentValue.tax,
@@ -241,27 +245,27 @@ const Create = (props: any) => {
         <MDBox p={4}>
           <Grid container spacing={2}>
             <Grid item sm={12}>
-              <MDTypography variant="body2" fontWeight="bold">
-                Purchase Order Information
+              <MDTypography variant="caption" fontWeight="bold">
+                Purchase Bill Information
               </MDTypography>
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2}>
               <Autocomplete
                 sx={{ width: "70%" }}
-                value={values.order_type}
+                value={values.purchase_type}
                 onChange={(event, newValue) => {
                   handleChange({
-                    target: { name: "order_type", value: newValue },
+                    target: { name: "purchase_type", value: newValue },
                   });
                 }}
                 options={gsttypes}
                 renderInput={(params: any) => (
                   <FormField
-                    label="Order Type"
+                    label={<MDTypography variant="caption">Purchase Type</MDTypography>}
                     InputLabelProps={{ shrink: true }}
-                    name="order_type"
+                    name="purchase_type"
                     onChange={handleChange}
-                    value={values.order_type}
+                    value={values.purchase_type}
                     {...params}
                     variant="outlined"
                   />
@@ -269,7 +273,7 @@ const Create = (props: any) => {
               />
             </Grid>
 
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <Autocomplete
                 sx={{ width: "70%" }}
                 value={values.supplier_name}
@@ -284,10 +288,9 @@ const Create = (props: any) => {
                     target: { name: "supplier_name", value: newValue },
                   });
 
-                  setFieldValue("contact_no", supplierData.contact_no);
-                  setFieldValue("place_supply", supplierData.state);
-                  if (values.order_type === "GST") {
-                    if (values.place_supply == companyInfo.state) {
+                  setFieldValue("place_of_supply", supplierData.state);
+                  if (values.purchase_type === "GST") {
+                    if (values.place_of_supply == companyInfo.state) {
                       console.log("state matches");
                       setStatetax("IntraState");
                     } else {
@@ -299,7 +302,7 @@ const Create = (props: any) => {
                 options={suppliersInfo.map((supplier: any) => supplier.company_name)}
                 renderInput={(params: any) => (
                   <FormField
-                    label="Supplier Name"
+                    label={<MDTypography variant="caption">Supplier Name</MDTypography>}
                     InputLabelProps={{ shrink: true }}
                     name="supplier_name"
                     onChange={handleChange}
@@ -310,28 +313,69 @@ const Create = (props: any) => {
                 )}
               />
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.5} mt={2}>
               <MDInput
-                sx={{ width: "70%" }}
                 variant="standard"
-                name="contact_no"
-                label="Contact No."
-                value={values.contact_no}
+                sx={{ width: "70%" }}
+                type="date"
+                name="bill_date"
+                value={values.bill_date}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={touched.contact_no && Boolean(errors.contact_no)}
-                helperText={touched.contact_no && errors.contact_no}
+                error={touched.bill_date && Boolean(errors.bill_date)}
+                helperText={touched.bill_date && errors.bill_date}
               />
             </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2.5}>
               <Autocomplete
-                value={values.place_supply}
-                sx={{ width: "70%" }}
+                value={values.payment_terms}
+                sx={{ width: "90%" }}
+                disableClearable
                 onChange={(event, value) => {
                   handleChange({
-                    target: { name: "place_supply", value },
+                    target: { name: "payment_terms", value },
                   });
-                  if (values.order_type === "GST") {
+                }}
+                options={periods}
+                renderInput={(params: any) => (
+                  <FormField
+                    label={
+                      <MDTypography variant="caption">Payment Terms(Credit Period)</MDTypography>
+                    }
+                    InputLabelProps={{ shrink: true }}
+                    name="place_of_supply"
+                    onChange={handleChange}
+                    value={values.place_of_supply}
+                    {...params}
+                    variant="outlined"
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item sm={2.5} mt={2}>
+              {" "}
+              <MDInput
+                variant="standard"
+                sx={{ width: "70%" }}
+                type="date"
+                name="due_date"
+                value={values.due_date}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.due_date && Boolean(errors.due_date)}
+                helperText={touched.due_date && errors.due_date}
+              />
+            </Grid>
+            <Grid item sm={2}>
+              <Autocomplete
+                value={values.place_of_supply}
+                sx={{ width: "90%" }}
+                onChange={(event, value) => {
+                  handleChange({
+                    target: { name: "place_of_supply", value },
+                  });
+                  if (values.purchase_type === "GST") {
                     if (value == companyInfo.state) {
                       console.log("state matches");
                       setStatetax("IntraState");
@@ -344,198 +388,85 @@ const Create = (props: any) => {
                 options={states}
                 renderInput={(params: any) => (
                   <FormField
-                    label="Place of Supply"
+                    label={<MDTypography variant="caption">Place of Supply</MDTypography>}
                     InputLabelProps={{ shrink: true }}
-                    name="place_supply"
+                    name="place_of_supply"
                     onChange={handleChange}
-                    value={values.place_supply}
+                    value={values.place_of_supply}
                     {...params}
                     variant="outlined"
                   />
                 )}
               />
             </Grid>
-
-            <Grid item sm={3}>
-              <MDTypography variant="subtitle2">Date</MDTypography>
-            </Grid>
-            <Grid item sm={3}>
-              <MDInput
-                variant="standard"
-                sx={{ width: "70%" }}
-                type="date"
-                name="date"
-                value={values.date}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.date && Boolean(errors.date)}
-                helperText={touched.date && errors.date}
-              />
-            </Grid>
-            <Grid item sm={3}>
-              <MDTypography variant="subtitle2">Valid Till</MDTypography>
-            </Grid>
-            <Grid item sm={3}>
+            <Grid item sm={2}>
               {" "}
               <MDInput
                 variant="standard"
-                sx={{ width: "70%" }}
-                type="date"
-                name="valid_till"
-                value={values.valid_till}
+                sx={{ width: "90%" }}
+                label={<MDTypography variant="caption">Purchase Bill No.</MDTypography>}
+                name="purchase_bill_no"
+                value={values.purchase_bill_no}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={touched.valid_till && Boolean(errors.valid_till)}
-                helperText={touched.valid_till && errors.valid_till}
+                error={touched.purchase_bill_no && Boolean(errors.purchase_bill_no)}
+                helperText={touched.purchase_bill_no && errors.purchase_bill_no}
+              />
+            </Grid>
+            <Grid item sm={2}>
+              {" "}
+              <MDInput
+                variant="standard"
+                sx={{ width: "90%" }}
+                label={<MDTypography variant="caption">Purchase Order No.</MDTypography>}
+                name="purchase_order_no"
+                value={values.purchase_order_no}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.purchase_order_no && Boolean(errors.purchase_order_no)}
+                helperText={touched.purchase_order_no && errors.purchase_order_no}
               />
             </Grid>
 
-            <Grid item sm={4} container sx={{ display: "flex", justifyContent: "center" }}></Grid>
+            <Grid item sm={3} mt={2}>
+              <MDInput
+                variant="standard"
+                sx={{ width: "70%" }}
+                type="date"
+                name="purchase_order_date"
+                value={values.purchase_order_date}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.purchase_order_date && Boolean(errors.purchase_order_date)}
+                helperText={touched.purchase_order_date && errors.purchase_order_date}
+              />
+            </Grid>
+            <Grid item sm={3}>
+              <MDInput
+                variant="standard"
+                sx={{ width: "70%" }}
+                required
+                label={<MDTypography variant="caption">E-Way Bill No.</MDTypography>}
+                name="e_way_bill_no"
+                value={values.e_way_bill_no}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.e_way_bill_no && Boolean(errors.e_way_bill_no)}
+                helperText={touched.e_way_bill_no && errors.e_way_bill_no}
+              />
+            </Grid>
 
             <Grid item sm={12}>
-              <MDTypography variant="body2" fontWeight="bold">
+              <MDTypography variant="caption" fontWeight="bold">
                 Particulars
               </MDTypography>
             </Grid>
 
-            <Grid item sm={3}>
-              <Autocomplete
-                sx={{ width: "100%" }}
-                value={values.item_name}
-                disableClearable
-                onChange={(event, newValue: any) => {
-                  const productData = productsInfo.find(
-                    (item: any) => item.product_name === newValue
-                  );
-                  console.log(productData, "product data");
-
-                  handleChange({
-                    target: { name: "item_name", value: newValue },
-                  });
-                  setFieldValue("price", productData.purchase_price);
-                  setFieldValue("tax", productData.igst);
-                  setFieldValue("cess", productData.cess);
-                  setFieldValue("unit", productData.unit);
-                  setFieldValue("disc", productData.sale_discount);
-                  setFieldValue("quantity", 1);
-                  setFieldValue("amount", productData.purchase_price);
-                }}
-                options={productsInfo.map(
-                  (products: { product_name: any }) => products.product_name
-                )}
-                renderInput={(params: any) => (
-                  <FormField
-                    label="Item Name *"
-                    InputLabelProps={{ shrink: true }}
-                    name="item_name"
-                    onChange={handleChange}
-                    value={values.item_name}
-                    {...params}
-                    variant="outlined"
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item sm={1} container>
-              <MDInput
-                variant="standard"
-                type="number"
-                name="quantity"
-                label="Quantity*"
-                value={values.quantity}
-                onChange={handleQuantityChange}
-                onBlur={handleBlur}
-                error={touched.quantity && Boolean(errors.quantity)}
-                helperText={touched.quantity && errors.quantity}
-              />
-            </Grid>
-            <Grid item sm={2} container>
-              <MDInput
-                variant="standard"
-                type="number"
-                name="price"
-                label="Purchase Price (₹)"
-                value={values.price}
-                onChange={handlePriceChange}
-                onBlur={handleBlur}
-                error={touched.price && Boolean(errors.price)}
-                helperText={touched.price && errors.price}
-              />
-            </Grid>
-            <Grid item sm={1}>
-              <Autocomplete
-                disableClearable
-                value={values.unit}
-                onChange={(event, newValue) => {
-                  handleChange({
-                    target: { name: "unit", value: newValue },
-                  });
-                }}
-                options={unitsName}
-                renderInput={(params: any) => (
-                  <FormField
-                    label="Unit"
-                    InputLabelProps={{ shrink: true }}
-                    name="unit"
-                    onChange={handleChange}
-                    value={values.unit}
-                    {...params}
-                    variant="outlined"
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item sm={1.5}>
-              <MDInput
-                variant="standard"
-                type="number"
-                name="disc"
-                label="Discount (%)"
-                value={values.disc}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.disc && Boolean(errors.disc)}
-                helperText={touched.disc && errors.disc}
-              />
-            </Grid>
-            <Grid item sm={1}>
-              <MDInput
-                variant="standard"
-                type="number"
-                name="tax"
-                label="Tax (%)"
-                value={values.tax}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.tax && Boolean(errors.tax)}
-                helperText={touched.tax && errors.tax}
-              />
-            </Grid>
-            <Grid item sm={1}>
-              <MDInput
-                variant="standard"
-                type="number"
-                name="cess"
-                label="CESS (%)"
-                value={values.cess}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.cess && Boolean(errors.cess)}
-                helperText={touched.cess && errors.cess}
-              />
-            </Grid>
-            <Grid item sm={1.5}>
-              <MDInput
-                variant="standard"
-                type="number"
-                name="amount"
-                label="Amount (₹)"
-                value={values.amount}
-                onBlur={handleBlur}
-                error={touched.amount && Boolean(errors.amount)}
-                helperText={touched.amount && errors.amount}
-              />
-            </Grid>
+            <Particulars
+              values={values}
+              handleChange={handleChange}
+              setFieldValue={setFieldValue}
+            />
           </Grid>
           <Grid item py={2} pr={2} sx={{ display: "flex", justifyContent: "flex-end" }}>
             <MDButton color="info" onClick={handleAddField}>
@@ -557,7 +488,7 @@ const Create = (props: any) => {
               <FormGroup>
                 <FormControlLabel
                   control={<Checkbox checked={checked} onChange={handleCheckbox} />}
-                  label={<MDTypography variant="body2">Add Shipping Cost</MDTypography>}
+                  label={<MDTypography variant="caption">Add Shipping Cost</MDTypography>}
                 />
               </FormGroup>
               {checked && (
@@ -566,7 +497,7 @@ const Create = (props: any) => {
                     variant="standard"
                     type="number"
                     name="shipping_cost"
-                    label="Cost (₹)"
+                    label={<MDTypography variant="caption">Cost (₹)</MDTypography>}
                     onChange={handleChange}
                     value={values.shipping_cost}
                     onBlur={handleBlur}
@@ -578,7 +509,7 @@ const Create = (props: any) => {
                     type="number"
                     onChange={handleChange}
                     name="shipping_tax"
-                    label="Tax(%)"
+                    label={<MDTypography variant="caption">Tax (%)</MDTypography>}
                     value={values.shipping_tax}
                     onBlur={handleBlur}
                     error={touched.shipping_tax && Boolean(errors.shipping_tax)}
@@ -588,25 +519,33 @@ const Create = (props: any) => {
               )}
             </Grid>
             <Grid item sm={3}>
+              <FormGroup>
+                <FormControlLabel
+                  control={<Checkbox checked={discountAll} onChange={handleCheckDiscount} />}
+                  label={<MDTypography variant="caption">Discount to all</MDTypography>}
+                />
+              </FormGroup>
+              {discountAll && (
+                <>
+                  <MDInput
+                    variant="standard"
+                    type="number"
+                    onChange={(e: any) => {
+                      setDiscountTax(e.target.value);
+                    }}
+                    label="Tax(%)"
+                    value={discountTax}
+                    onBlur={handleBlur}
+                  />
+                </>
+              )}
               <MDInput
                 multiline
-                rows={2}
-                onChange={handleChange}
-                variant="standard"
-                name="delivery_terms"
-                label="Delivery Terms"
-                value={values.delivery_terms}
-                onBlur={handleBlur}
-                error={touched.delivery_terms && Boolean(errors.delivery_terms)}
-                helperText={touched.delivery_terms && errors.delivery_terms}
-              />
-              <MDInput
-                multiline
-                rows={2}
+                rows={3}
                 onChange={handleChange}
                 variant="standard"
                 name="remarks"
-                label="Remarks (Private Use)"
+                label={<MDTypography variant="caption">Remarks (private use)</MDTypography>}
                 value={values.remarks}
                 onBlur={handleBlur}
                 error={touched.remarks && Boolean(errors.remarks)}
@@ -615,7 +554,7 @@ const Create = (props: any) => {
             </Grid>
             <Grid item sm={3}>
               <Stack>
-                <MDTypography variant="body2" fontWeight="bold">
+                <MDTypography variant="caption" fontWeight="bold">
                   Payment
                 </MDTypography>
               </Stack>
@@ -631,7 +570,7 @@ const Create = (props: any) => {
                 options={paymodes}
                 renderInput={(params: any) => (
                   <FormField
-                    label="Payment Mode"
+                    label={<MDTypography variant="caption">Payment Mode</MDTypography>}
                     InputLabelProps={{ shrink: true }}
                     name="payment_mode"
                     onChange={handleChange}
@@ -645,7 +584,7 @@ const Create = (props: any) => {
                 sx={{ width: "70%" }}
                 variant="standard"
                 name="transaction_id"
-                label="Transaction ID"
+                label={<MDTypography variant="caption">Transaction ID</MDTypography>}
                 value={values.transaction_id}
                 onBlur={handleBlur}
                 error={touched.transaction_id && Boolean(errors.transaction_id)}
@@ -657,7 +596,7 @@ const Create = (props: any) => {
                 variant="standard"
                 type="number"
                 name="amount_paid"
-                label="Amount Paid (₹)"
+                label={<MDTypography variant="caption">Amount Paid(₹)</MDTypography>}
                 value={values.amount_paid}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -666,36 +605,36 @@ const Create = (props: any) => {
               />
             </Grid>
             <Grid item sm={3}>
-              <MDTypography variant="body2" fontWeight="bold">
+              <MDTypography variant="caption" fontWeight="bold">
                 Sub Total :{subTotal}
               </MDTypography>
-              {values.order_type == "GST" && statetax == "InterState" && (
+              {values.purchase_type == "GST" && statetax == "InterState" && (
                 <>
-                  <MDTypography variant="body2">
+                  <MDTypography variant="caption">
                     Add IGST({igstTotaltax}%) :{(igstTotaltax * subTotal) % 100}
                   </MDTypography>
-                  <MDTypography variant="body2" fontWeight="bold">
+                  <MDTypography variant="caption" fontWeight="bold">
                     TOTAL AMOUNT :{subTotal + igstTotal + values.shipping_cost}
                   </MDTypography>
                 </>
               )}
-              {values.order_type == "GST" && statetax == "IntraState" && (
+              {values.purchase_type == "GST" && statetax == "IntraState" && (
                 <>
-                  <MDTypography variant="body2">
+                  <MDTypography variant="caption">
                     Add SGST({igstTotaltax / 2}%) :{((igstTotaltax * subTotal) % 100) / 2}
                   </MDTypography>
-                  <MDTypography variant="body2">
+                  <MDTypography variant="caption">
                     Add CGST({igstTotaltax / 2}%) :{((igstTotaltax * subTotal) % 100) / 2}
                   </MDTypography>
 
-                  <MDTypography variant="body2" fontWeight="bold">
+                  <MDTypography variant="caption" fontWeight="bold">
                     TOTAL AMOUNT :{subTotal + igstTotal + values.shipping_cost}
                   </MDTypography>
                 </>
               )}
-              {values.order_type !== "GST" && (
+              {values.purchase_type !== "GST" && (
                 <>
-                  <MDTypography variant="body2" fontWeight="bold">
+                  <MDTypography variant="caption" fontWeight="bold">
                     TOTAL AMOUNT :{subTotal + values.shipping_cost}
                   </MDTypography>
                 </>
@@ -714,6 +653,6 @@ const Create = (props: any) => {
       </Card>
     </form>
   );
-};
+}
 
 export default Create;

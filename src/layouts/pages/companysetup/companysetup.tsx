@@ -60,6 +60,8 @@ const states = [
 
 const taxation_methods = ["Not Applicable", "GST", "Composition Scheme"];
 const Test = () => {
+  const [sendImageOne, setSendImageOne] = useState(false);
+  const [sendImageTwo, setSendImageTwo] = useState(false);
   const [formData, setFormData] = useState({
     businessname: "",
     address: "",
@@ -75,8 +77,6 @@ const Test = () => {
     company_logo: "",
     signature: "",
   });
-  // const [imageone, setImageone] = useState(null);
-  // const [imagetwo, setImagetwo] = useState(null);
 
   const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
@@ -101,6 +101,7 @@ const Test = () => {
           ...formData,
           company_logo: e.target.files[0],
         });
+        setSendImageOne(true);
       } else {
         message.error("Please select a valid PNG, JPEG, or HEIC image.");
       }
@@ -122,6 +123,7 @@ const Test = () => {
           ...formData,
           signature: e.target.files[0],
         });
+        setSendImageTwo(true);
       } else {
         message.error("Please select a valid PNG, JPEG, or HEIC image.");
       }
@@ -226,8 +228,16 @@ const Test = () => {
     formDataObj.append("pan_no", formData.pan_no);
     formDataObj.append("gstin", formData.gstin);
     formDataObj.append("taxation_method", formData.taxation_method);
-    formDataObj.append("company_logo", formData.company_logo);
-    formDataObj.append("signature", formData.signature);
+    if (sendImageOne) {
+      formDataObj.append("company_logo", formData.company_logo);
+    } else {
+      formDataObj.append("company_logo", "");
+    }
+    if (sendImageTwo) {
+      formDataObj.append("signature", formData.signature);
+    } else {
+      formDataObj.append("signature", "");
+    }
 
     try {
       const response = await axios.put("http://10.0.20.121:8000/company", formDataObj, {

@@ -49,7 +49,7 @@ const View = () => {
   };
   useEffect(() => {
     axios
-      .get("http://10.0.20.121:8000/purchaseorder", {
+      .get("http://10.0.20.121:8000/purchase_bill", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -66,22 +66,22 @@ const View = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "Order Type", accessor: "order_type" },
+      { Header: "Order Type", accessor: "purchase_type" },
       { Header: "Supplier Name", accessor: "supplier_name" },
-      { Header: "State (PoS)", accessor: "place_supply" },
-      { Header: "Date", accessor: "date" },
-      { Header: "Valid Till", accessor: "valid_till" },
+      { Header: "State (PoS)", accessor: "place_of_supply" },
+      { Header: "Date", accessor: "purchase_order_date" },
+
       { Header: "Total Amount", accessor: "total" },
 
       { Header: "Action", accessor: "action" },
     ],
 
     rows: data.map((row, index) => ({
-      order_type: <MDTypography variant="p">{row.order_type}</MDTypography>,
-      place_supply: <MDTypography variant="p">{row.place_supply}</MDTypography>,
+      purchase_type: <MDTypography variant="p">{row.purchase_type}</MDTypography>,
+      place_of_supply: <MDTypography variant="p">{row.place_of_supply}</MDTypography>,
       supplier_name: <MDTypography variant="p">{row.supplier_name}</MDTypography>,
-      date: <MDTypography variant="p">{row.date}</MDTypography>,
-      valid_till: <MDTypography variant="p">{row.valid_till}</MDTypography>,
+      purchase_order_date: <MDTypography variant="p">{row.purchase_order_date}</MDTypography>,
+
       total: <MDTypography variant="p">{row.total}</MDTypography>,
 
       action: (
@@ -98,7 +98,7 @@ const View = () => {
       <DashboardNavbar />
 
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <MDTypography>Purchase Orders</MDTypography>
+        <MDTypography>Manage Purchases</MDTypography>
         <MDButton variant="contained" color="info" onClick={handleOpenCreate}>
           + Add
         </MDButton>
