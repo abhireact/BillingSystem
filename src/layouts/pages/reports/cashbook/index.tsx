@@ -12,6 +12,7 @@ import Grid from "@mui/material/Grid";
 import FormField from "layouts/ecommerce/products/new-product/components/FormField";
 import Autocomplete from "@mui/material/Autocomplete";
 import MDTypography from "components/MDTypography";
+import DataTable from "examples/Tables/DataTable";
 import MDDropzone from "components/MDDropzone";
 import Radio from "@mui/material/Radio";
 import FormControl from "@mui/material/FormControl";
@@ -19,7 +20,7 @@ import { FormControlLabel, FormLabel, RadioGroup } from "@mui/material";
 import { useState, useEffect } from "react";
 import MDAvatar from "components/MDAvatar";
 const token = Cookies.get("token");
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SearchIcon from "@mui/icons-material/Search";
 import { message } from "antd";
 import Checkbox from "@mui/material/Checkbox";
 
@@ -29,7 +30,7 @@ let initialValues = {
 };
 
 const Create = () => {
-  // Conditionally set the validation schema
+  const [data, setData] = useState([]);
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues,
@@ -48,9 +49,8 @@ const Create = () => {
           })
           .then((response) => {
             if (response.status === 200) {
-              console.log("Created Successfully");
-
-              message.success("Created SuccessFully");
+              setData(response.data);
+              message.success("Fetched Data successfully");
             }
           })
           .catch((error) => {
@@ -60,9 +60,24 @@ const Create = () => {
       };
 
       handleCreateSubmit();
-      action.resetForm();
     },
   });
+  const dataTableData = {
+    columns: [
+      { Header: "Particular", accessor: "particular" },
+
+      { Header: "Date", accessor: "date" },
+      { Header: "Credit", accessor: "credit" },
+      { Header: "Debit", accessor: "debit" },
+    ],
+
+    rows: data.map((row: any, index: any) => ({
+      particular: <MDTypography variant="p">{row.particular}</MDTypography>,
+      date: <MDTypography variant="p">{row.date}</MDTypography>,
+      credit: <MDTypography variant="p">{row.credit}</MDTypography>,
+      debit: <MDTypography variant="p">{row.debit}</MDTypography>,
+    })),
+  };
 
   return (
     <DashboardLayout>
@@ -73,11 +88,8 @@ const Create = () => {
             <Grid container sx={{ display: "flex", justifyContent: "center" }}>
               <Grid item sm={12} sx={{ display: "flex", justifyContent: "space-between" }}>
                 <MDTypography variant="body1" fontWeight="bold">
-                  Cashbook
+                  Cash Book
                 </MDTypography>
-                <MDButton color="info" variant="contained" type="submit">
-                  Submit
-                </MDButton>
               </Grid>
 
               <Grid item sm={3}>
@@ -111,8 +123,15 @@ const Create = () => {
                   helperText={touched.to_date && errors.to_date}
                 />
               </Grid>
+              <Grid item sm={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <MDButton color="info" variant="contained" type="submit">
+                  Search&nbsp;
+                  <SearchIcon />
+                </MDButton>
+              </Grid>
             </Grid>
           </MDBox>
+          <DataTable table={dataTableData} entriesPerPage={false} />
         </Card>
       </form>
     </DashboardLayout>

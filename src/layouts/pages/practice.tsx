@@ -1,7 +1,6 @@
 import MDInput from "components/MDInput";
 import DataTable from "examples/Tables/DataTable";
 import { useFormik } from "formik";
-import * as yup from "yup";
 import axios from "axios";
 import Card from "@mui/material/Card";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -10,12 +9,10 @@ import MDBox from "components/MDBox";
 import Cookies from "js-cookie";
 import MDButton from "components/MDButton";
 import Grid from "@mui/material/Grid";
+import MDTypography from "components/MDTypography";
+import FormControl from "@mui/material/FormControl";
 import FormField from "layouts/ecommerce/products/new-product/components/FormField";
 import Autocomplete from "@mui/material/Autocomplete";
-import MDTypography from "components/MDTypography";
-import MDDropzone from "components/MDDropzone";
-import Radio from "@mui/material/Radio";
-import FormControl from "@mui/material/FormControl";
 import {
   FormControlLabel,
   FormLabel,
@@ -30,36 +27,19 @@ const token = Cookies.get("token");
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { message } from "antd";
 import Checkbox from "@mui/material/Checkbox";
+import { useSelector } from "react-redux";
 
 let initialValues = {
-  product_name: "",
+  supplier_name: "",
   to_date: "",
   from_date: "",
 };
 
 const Create = () => {
-  const [productsoption, setProductsoption] = useState([]);
+  const { suppliersInfo } = useSelector((state: { dataReducer: any }) => state.dataReducer);
+
   const [data, setData] = useState([]);
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get("http://10.0.20.121:8000/products", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.status === 200) {
-        console.log(response.data, "products data");
-        setProductsoption(response.data);
-      }
-    } catch (error) {
-      // console.error(error);
-      console.log("Data not found");
-    }
-  };
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues,
 
@@ -69,7 +49,7 @@ const Create = () => {
         let sendData = values;
 
         await axios
-          .post("http://10.0.20.121:8000/inventory/itemregister", sendData, {
+          .post("http://10.0.20.121:8000/account/suppliers", sendData, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -81,15 +61,17 @@ const Create = () => {
               setData(response.data);
               action.resetForm();
             }
+            if (response.status === 404) {
+              message.error("No Data Found");
+            }
           })
           .catch((error) => {
             console.error(error);
-            message.error("Error Occured");
+            message.error("Error Occurred");
           });
       };
 
       handleCreateSubmit();
-      action.resetForm();
     },
   });
   const dataTableData = {
@@ -118,31 +100,37 @@ const Create = () => {
             <Grid container>
               <Grid item sm={12}>
                 <MDTypography variant="body1" fontWeight="bold" py={2}>
-                  Item Register
+                  Supplier Payment History
                 </MDTypography>
               </Grid>
 
               <Grid item sm={4}>
-                <FormControl sx={{ minWidth: "70%" }}>
-                  <InputLabel>Choose Product</InputLabel>
-                  <Select
-                    label="choose group"
-                    value={values.product_name}
-                    onChange={handleChange}
-                    autoWidth={true}
-                    name="product_name"
-                    variant="standard"
-                  >
-                    {productsoption.map((products, index) => (
-                      <MenuItem key={index} value={products.product_name}>
-                        {products.product_name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                {" "}
+                <Autocomplete
+                  sx={{ width: "70%" }}
+                  value={values.supplier_name}
+                  disableClearable
+                  onChange={(event, newValue: any) => {
+                    handleChange({
+                      target: { name: "supplier_name", value: newValue },
+                    });
+                  }}
+                  options={suppliersInfo.map((supplier: any) => supplier.company_name)}
+                  renderInput={(params: any) => (
+                    <FormField
+                      label={<MDTypography variant="caption">Supplier Name</MDTypography>}
+                      InputLabelProps={{ shrink: true }}
+                      name="supplier_name"
+                      onChange={handleChange}
+                      value={values.supplier_name}
+                      {...params}
+                      variant="outlined"
+                    />
+                  )}
+                />
               </Grid>
 
-              <Grid item sm={3} sx={{ display: "flex", justifyContent: "center" }}>
+              <Grid item sm={3} sx={{ display: "flex", justifyContent: "center" }} mt={2}>
                 <MDInput
                   variant="standard"
                   type="date"
@@ -154,10 +142,10 @@ const Create = () => {
                   helperText={touched.from_date && errors.from_date}
                 />
               </Grid>
-              <Grid item sm={1} sx={{ display: "flex", justifyContent: "center" }}>
+              <Grid item sm={1} sx={{ display: "flex", justifyContent: "center" }} mt={2}>
                 <MDTypography variant="body2"> to</MDTypography>
               </Grid>
-              <Grid item sm={3} sx={{ display: "flex", justifyContent: "center" }}>
+              <Grid item sm={3} sx={{ display: "flex", justifyContent: "center" }} mt={2}>
                 <MDInput
                   variant="standard"
                   type="date"

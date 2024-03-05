@@ -94,13 +94,20 @@ import LLStocks from "layouts/pages/low_level_stocks";
 import StockAvailability from "layouts/pages/stock_availability";
 import Supplier from "layouts/pages/supplier";
 import Test from "layouts/pages/test";
-import Cashbook from "layouts/pages/billing_account/cashbook";
-import ItemRegister from "layouts/pages/billing_account/item_register";
+import TestPage from "layouts/pages/practice";
+
+import Cashbook from "layouts/pages/reports/cashbook";
+import Clients from "layouts/pages/reports/clients";
+import Suppliers from "layouts/pages/reports/supplier";
+import ItemRegister from "layouts/pages/reports/item_register";
+
 import StockAdjust from "layouts/pages/purchase/stock_adjustment";
+import PurchaseReturn from "layouts/pages/purchase/purchase_return";
 import PurchaseOrder from "layouts/pages/purchase/purchase_order";
 import PurchaseBill from "layouts/pages/purchase/purchase_bill";
 import InvoicePDF from "layouts/pages/purchase/invoice_pdf";
 import PaymentOut from "layouts/pages/payment_out";
+import PaymentIn from "layouts/pages/payment_in";
 import Reduxpage from "layouts/pages/homepage";
 const routes = [
   {
@@ -148,11 +155,18 @@ const routes = [
             route: "/pages/intern/reduxpage",
             component: <Reduxpage />,
           },
+
           {
             name: "Test Code",
             key: "test",
             route: "/pages/intern/test",
             component: <Test />,
+          },
+          {
+            name: "Test Practice",
+            key: "testpage",
+            route: "/pages/intern/testpage",
+            component: <TestPage />,
           },
           {
             name: "Invoice PDF",
@@ -167,6 +181,12 @@ const routes = [
             component: <PurchaseBill />,
           },
           {
+            name: "Purchase Return",
+            key: "purchasereturn",
+            route: "/pages/intern/purchasereturn",
+            component: <PurchaseReturn />,
+          },
+          {
             name: "Purchase Order",
             key: "purchaseorder",
             route: "/pages/intern/purchaseorder",
@@ -177,6 +197,12 @@ const routes = [
             key: "paymentout",
             route: "/pages/intern/paymentout",
             component: <PaymentOut />,
+          },
+          {
+            name: "Payment In",
+            key: "paymentin",
+            route: "/pages/intern/paymentin",
+            component: <PaymentIn />,
           },
           {
             name: "Stock Adjustment",
@@ -311,6 +337,36 @@ const routes = [
             component: <ClientInfo />,
           },
           { name: "Login Page", key: "Login", route: "/pages/intern/login", component: <Login /> },
+        ],
+      },
+      {
+        name: "Reports",
+        key: "report",
+        collapse: [
+          {
+            name: "Cashbook",
+            key: "cashbook",
+            route: "/pages/report/cashbook",
+            component: <Cashbook />,
+          },
+          {
+            name: "Item Register",
+            key: "itemregister",
+            route: "/pages/report/item_register",
+            component: <ItemRegister />,
+          },
+          {
+            name: "Supplier",
+            key: "supplier",
+            route: "/pages/report/supplier",
+            component: <Suppliers />,
+          },
+          {
+            name: "Client",
+            key: "client",
+            route: "/pages/report/client",
+            component: <Clients />,
+          },
         ],
       },
     ],

@@ -10,6 +10,7 @@ interface DataState {
   suppliersName: string[];
   suppliersInfo: string[];
   companyInfo: string[];
+  clientInfo: string[];
 
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -23,6 +24,7 @@ const initialState: DataState = {
   unitsName: [],
   suppliersInfo: [],
   companyInfo: [],
+  clientInfo: [],
   status: "idle",
   error: null,
 };
@@ -101,6 +103,23 @@ export const fetchCompany = createAsyncThunk<string[], void>("data/fetchCompany"
     throw new Error("Failed to fetch products");
   }
 });
+export const fetchClientAccount = createAsyncThunk<string[], void>(
+  "data/fetchClientAccount",
+  async () => {
+    try {
+      const response = await axios.get("http://10.0.20.121:8000/clientaccount", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data, "redux client info");
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to fetch products");
+    }
+  }
+);
 const dataSlice = createSlice({
   name: "data",
   initialState,
@@ -161,6 +180,17 @@ const dataSlice = createSlice({
         state.companyInfo = action.payload;
       })
       .addCase(fetchCompany.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchClientAccount.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchClientAccount.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.clientInfo = action.payload;
+      })
+      .addCase(fetchClientAccount.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });

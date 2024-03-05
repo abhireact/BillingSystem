@@ -36,7 +36,7 @@
 //   }, []);
 //   const dataTableData = {
 //     columns: [
-//       { Header: "Supplier Name", accessor: "supplier_name" },
+//       { Header: "Supplier Name", accessor: "client_name" },
 //       { Header: "Date", accessor: "date" },
 //       { Header: "Transaction ID", accessor: "transaction_id" },
 //       { Header: "Amount", accessor: "amount" },
@@ -45,7 +45,7 @@
 
 //     rows: data.map((row, index) => ({
 //       date: <MDTypography variant="p">{row.date}</MDTypography>,
-//       supplier_name: <MDTypography variant="p">{row.supplier_name}</MDTypography>,
+//       client_name: <MDTypography variant="p">{row.client_name}</MDTypography>,
 //       transaction_id: <MDTypography variant="p">{row.transaction_id}</MDTypography>,
 //       amount: <MDTypography variant="p">{row.amount}</MDTypography>,
 //       remarks: <MDTypography variant="p">{row.remarks}</MDTypography>,
@@ -125,7 +125,7 @@ const paymentOut = () => {
   };
   useEffect(() => {
     axios
-      .get("http://10.0.20.121:8000/paymentout", {
+      .get("http://10.0.20.121:8000/paymentin", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -142,9 +142,9 @@ const paymentOut = () => {
   }, []);
   const dataTableData = {
     columns: [
-      { Header: "Supplier Name", accessor: "client_name" },
+      { Header: "Client Name", accessor: "client_name" },
       { Header: "Date", accessor: "date" },
-      { Header: "Transaction ID", accessor: "transaction_id" },
+      { Header: "Transaction ID", accessor: "trnx_id" },
       { Header: "Amount", accessor: "amount" },
       { Header: "Remarks", accessor: "remarks" },
     ],
@@ -152,7 +152,7 @@ const paymentOut = () => {
     rows: data.map((row, index) => ({
       date: <MDTypography variant="p">{row.date}</MDTypography>,
       client_name: <MDTypography variant="p">{row.client_name}</MDTypography>,
-      transaction_id: <MDTypography variant="p">{row.transaction_id}</MDTypography>,
+      trnx_id: <MDTypography variant="p">{row.trnx_id}</MDTypography>,
       amount: <MDTypography variant="p">{row.amount}</MDTypography>,
       remarks: <MDTypography variant="p">{row.remarks}</MDTypography>,
     })),
@@ -162,7 +162,7 @@ const paymentOut = () => {
       <DashboardNavbar />
 
       <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-        <MDTypography>Payment Out </MDTypography>
+        <MDTypography>Payment In </MDTypography>
         <MDButton variant="contained" color="info" onClick={handleOpenCreate}>
           + Add
         </MDButton>
